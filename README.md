@@ -55,7 +55,7 @@ pnpm install
 pnpm dev
 ```
 
-**Deployment**
+**Deployment**  
 This application is deployed on Vercel available here: (to be added).
 
 ## Assignment Context
