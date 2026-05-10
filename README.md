@@ -65,5 +65,5 @@ This project was developed as part of a university assignment for COMP3036 at We
 - modern frontend frameworks
 - software architecture principles
 - version control and collaboration workflows
-- scalable monorepo project structure
-Note: some features such as the database schema and payment system are simplified or mocked.
+- scalable monorepo project structure  
+Note: some features such as the database schema and payment system are simplified or mocked.  
