@@ -1,6 +1,7 @@
 import Header from './components/Header';
 import Footer from './components/Footer';
-
+import ProductCategories from './components/ProductCategories';
+import ProductGallery from './components/ProductGallery';
 
 export default function Home() {
   return (
@@ -19,7 +20,14 @@ export default function Home() {
         </div>
       </section>
 
-     
+      {/* product categories */}
+      <ProductCategories />
+
+      {/* product gallery */}
+      <ProductGallery />
+
+      {/* footer */}
+      <Footer />
     </div>
   );
 }
