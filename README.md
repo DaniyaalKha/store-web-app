@@ -15,11 +15,11 @@ Additionally, admins can:
 Written in TypeScript.
 
 **Frontend**
-- NextJS
 - React
-- Shadcn/ui
+- Tailwind CSS
 
 **Backend**
+- NextJS
 - Prisma
 
 ## Getting Started
