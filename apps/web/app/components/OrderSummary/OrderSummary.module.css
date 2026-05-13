@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.detailsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.detailsTable tbody tr {
+  border: none;
+}
+
+.detailsTable tbody tr td {
+  padding: 0.5rem 0;
+  vertical-align: top;
+  font-size: 0.875rem;
+}
+
+.detailLabel {
+  font-weight: 500;
+  width: 33%;
+}
+
+.detailValue {
+  color: var(--muted-foreground);
+  width: 33%;
+}
+
+.itemsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.totalLabel {
+  text-align: left;
+}
+
+.totalAmount {
+  text-align: right;
+}
