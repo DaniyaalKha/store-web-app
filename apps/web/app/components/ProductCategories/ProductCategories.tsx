@@ -7,9 +7,13 @@ import styles from './ProductCategories.module.css';
 
 const categories = ['CPU', 'Graphics', 'Memory', 'Storage', 'Motherboards', 'Power', 'Cooling', 'Cases', 'Accessories'];
 
-export default function ProductCategories() {
+interface ProductCategoriesProps {
+  fullWidth?: boolean;
+}
+
+export default function ProductCategories({ fullWidth = false }: ProductCategoriesProps) {
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${fullWidth ? styles.fullWidth : ''}`}>
       <div className={styles.container}>
         {/* categories bar */}
         <div className={styles.categoriesBar}>
