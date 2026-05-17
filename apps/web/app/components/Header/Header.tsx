@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import styles from './Header.module.css';
 
@@ -38,6 +39,13 @@ export default function Header() {
             <Button className={styles.loginButton}>
               Login
             </Button>
+          </Link>
+          
+          <Link href="/cart" className={styles.cartLink}>
+            <div className={styles.cartIcon}>
+              <ShoppingCart size={20} />
+              <span className={styles.cartBadge}>123</span>
+            </div>
           </Link>
         </nav>
       </div>

@@ -67,3 +67,35 @@
   background-color: hsl(var(--primary) / 0.9);
   color: hsl(var(--primary-foreground));
 }
+
+.cartLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 150ms;
+}
+
+.cartLink:hover {
+  transform: scale(1.1);
+}
+
+.cartIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: hsl(var(--foreground));
+}
+
+.cartBadge {
+  position: absolute;
+  top: -8px;
+  right: -16px;
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 50%;
+  min-width: 18px;
+  text-align: center;
+}
