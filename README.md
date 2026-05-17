@@ -16,12 +16,7 @@ Written in TypeScript.
 
 **Frontend**
 - React
-<<<<<<< HEAD
-- TailwindCSS
-- Shadcn/ui
-=======
 - Tailwind CSS
->>>>>>> origin/main
 
 **Backend**
 - NextJS
@@ -69,13 +64,8 @@ This project was developed as part of a university assignment for COMP3036 at We
 - modern frontend frameworks
 - software architecture principles
 - version control and collaboration workflows
-<<<<<<< HEAD
-- scalable monorepo project structure  
-Note: some features such as the database schema and payment system are simplified or mocked.  
-=======
 - scalable monorepo project structure
 
 ## Attributions
 - [Luis Gonzalez / luchox23 on Unsplash for computer photo](https://unsplash.com/photos/black-and-gray-computer-keyboard-jgzdwJWCPDI)
 - [Arham Abdullah on SketchFab for RTX 3080TI graphics card model](https://sketchfab.com/3d-models/rtx-3080ti-graphics-card-3d-model-7c90da836c4a43ee99afbe0c0f39cf12)
->>>>>>> origin/main
