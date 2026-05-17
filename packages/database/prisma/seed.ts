@@ -37,35 +37,42 @@ async function main() {
     prisma.brand.create({
       data: {
         name: "AMD",
-        logo_url: "images/brands/logos/amd.png",
+        logo_url: "/brands/AMD.png",
       },
     }),
 
     prisma.brand.create({
       data: {
         name: "Intel",
-        logo_url: "images/brands/logos/intel.png",
+        logo_url: "/brands/Intel.png",
       },
     }),
 
     prisma.brand.create({
       data: {
         name: "NVIDIA",
-        logo_url: "images/brands/logos/nvidia.png",
+        logo_url: "/brands/Nvidia.png",
       },
     }),
 
     prisma.brand.create({
       data: {
         name: "MSI",
-        logo_url: "images/brands/logos/msi.png",
+        logo_url: "/brands/MSI.png",
       },
     }),
 
     prisma.brand.create({
       data: {
         name: "Corsair",
-        logo_url: "images/brands/logos/corsair.png",
+        logo_url: "/brands/Corsair.png",
+      },
+    }),
+
+    prisma.brand.create({
+      data: {
+        name: "Gigabyte",
+        logo_url: "/brands/Gigabyte.png",
       },
     }),
   ]);
@@ -80,102 +87,99 @@ async function main() {
     {
       name: "Ryzen 7 7800X3D",
       description:
-        "8-core gaming CPU with excellent gaming performance.",
+        "Features 8 cores, 16 threads, and a massive 96MB of L3 cache via AMD's 3D V-Cache technology.",
       brand_id: brandMap["AMD"]!,
       category_id: categoryMap[CategoryName.CPU]!,
       stock_quantity: 20,
       price: "649.0",
-      image_url: "images/products/7800x3d.jpg",
+      image_url: "/products/images/AMD_Ryzen_7.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
 
     {
       name: "Ryzen 9 9950X",
       description:
-        "16-core enthusiast processor for gaming and productivity.",
+        "AMD's flagship 16-core, 32-thread desktop processor built on the Zen 5 architecture.",
       brand_id: brandMap["AMD"]!,
       category_id: categoryMap[CategoryName.CPU]!,
       stock_quantity: 12,
       price: "1199.0",
-      image_url: "images/products/9950x.jpg",
+      image_url: "/products/images/AMD_Ryzen_9.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
 
     {
-      name: "Intel Core i9-14900K",
+      name: "Core i9-14900K",
       description:
-        "Flagship Intel processor for high-end gaming and workloads.",
+        "Intel's flagship 24-core desktop processor featuring blazing clock speeds up to 6.0 GHz.",
       brand_id: brandMap["Intel"]!,
       category_id: categoryMap[CategoryName.CPU]!,
       stock_quantity: 15,
       price: "899.0",
-      image_url: "images/products/14900k.jpg",
+      image_url: "/products/images/Intel_i9.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
 
     // Products: GPUs
     {
-      name: "RTX 5090",
+      name: "RTX 5090 (32GB)",
       description:
-        "Ultra high-end graphics card for 4K and AI workloads.",
-      brand_id: brandMap["NVIDIA"]!,
+        "Ultra high-end NVIDIA GPU for 4K and AI workloads.",
+      brand_id: brandMap["MSI"]!,
       category_id: categoryMap[CategoryName.GPU]!,
       stock_quantity: 6,
-      price: "3999.0",
-      image_url: "images/products/rtx5090.jpg",
+      price: "6199.0",
+      image_url: "/products/images/MSI_RTX_5090.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
 
     {
-      name: "RTX 5080 SUPER",
+      name: "RTX 5080 (16GB)",
       description:
-        "High-end gaming GPU for 4K ultra gaming.",
-      brand_id: brandMap["NVIDIA"]!,
+        "High-end gaming NVIDIA GPU for 4K ultra gaming.",
+      brand_id: brandMap["MSI"]!,
       category_id: categoryMap[CategoryName.GPU]!,
       stock_quantity: 10,
       price: "2199.0",
-      image_url: "images/products/rtx5080super.jpg",
+      image_url: "/products/images/MSI_RTX_5080.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
 
     {
-      name: "RTX 5070 Ti",
+      name: "RTX 5070 (12GB)",
       description:
-        "Mid-to-high range GPU ideal for 1440p gaming.",
-      brand_id: brandMap["NVIDIA"]!,
+        "Mid-range NVIDIA GPU ideal for 1440p gaming.",
+      brand_id: brandMap["Gigabyte"]!,
       category_id: categoryMap[CategoryName.GPU]!,
       stock_quantity: 18,
-      price: "1399.0",
-      image_url: "images/products/rtx5070ti.jpg",
+      price: "999.0",
+      image_url: "/products/images/Gigabyte_RTX_5070.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
 
     {
-      name: "RX 7600",
+      name: "Radeon RX 7600 (8GB)",
       description:
         "Entry-level AMD GPU great for 1080p gaming and budget builds.",
       brand_id: brandMap["AMD"]!,
       category_id: categoryMap[CategoryName.GPU]!,
       stock_quantity: 25,
-      price: "449.0",
-      image_url: "images/products/rx7600.jpg",
-    },
-
-    {
-      name: "RX 7900 XTX",
-      description:
-        "High-end AMD GPU designed for 4K gaming and demanding workloads.",
-      brand_id: brandMap["AMD"]!,
-      category_id: categoryMap[CategoryName.GPU]!,
-      stock_quantity: 10,
-      price: "1799.0",
-      image_url: "images/products/rx7900xtx.jpg",
+      price: "399.0",
+      image_url: "/products/images/AMD_Radeon_RX_7600.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
 
     // Products: RAM
     {
-      name: "Corsair Vengeance DDR5 32GB 6000MHz",
+      name: "Vengeance DDR5 32GB 6000MHz",
       description:
-        "High-speed DDR5 memory kit for gaming systems.",
+        "High-speed DDR5 memory.",
       brand_id: brandMap["Corsair"]!,
       category_id: categoryMap[CategoryName.RAM]!,
       stock_quantity: 25,
       price: "219.0",
-      image_url: "images/products/vengeance32.jpg",
+      image_url: "/products/images/Corsair_Vengeance_RAM.png",
+      model_3d_url: "/products/models/RTX_3080.glb",
     },
   ];
 
