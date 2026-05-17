@@ -13,7 +13,7 @@ export default function Header() {
         <div className={styles.logoContainer}>
           <Link href="/" className={styles.logo}>
             <Image
-              src="/next.svg"
+              src="/store-branding/logo.png"
               alt="Daniyaal's Tech Store logo"
               width={40}
               height={40}
