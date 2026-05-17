@@ -5,3 +5,157 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+enum UserRole {
+  customer
+  admin
+}
+
+enum OrderStatus {
+  pending
+  paid
+  shipped
+  delivered
+  cancelled
+  refunded
+}
+
+enum CategoryName {
+  CPU
+  GPU
+  motherboard
+  RAM
+  case
+  fan
+  storage
+  PSU
+  cable
+  mouse
+  keyboard
+  monitor
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  first_name    String
+  last_name     String
+  password_hash String
+  joined        DateTime @default(now())
+
+  role UserRole @default(customer)
+
+  address String?
+  city    String?
+  state   String?
+  country String?
+
+  orders Order[]
+  cart   Cart?
+
+  @@map("users")
+}
+
+model Brand {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  logo_url String?
+
+  products Product[]
+
+  @@map("brands")
+}
+
+model Category {
+  id   Int          @id @default(autoincrement())
+  name CategoryName @unique
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+
+  brand_id    Int
+  category_id Int
+
+  name        String
+  description String?
+
+  stock_quantity Int    @default(0)
+  image_url      String?
+  model_3d_url   String?
+
+  price Decimal
+
+  brand    Brand    @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  order_items OrderProduct[]
+  cart_items  CartItem[]
+
+  @@index([brand_id])
+  @@index([category_id])
+
+  @@map("products")
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+
+  user_id String
+
+  status OrderStatus @default(pending)
+
+  order_time DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  products OrderProduct[]
+
+  @@index([user_id])
+
+  @@map("orders")
+}
+
+model OrderProduct {
+  order_id   Int
+  product_id Int
+
+  quantity Int @default(1)
+
+  order   Order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@id([order_id, product_id])
+
+  @@map("orders_products")
+}
+
+model Cart {
+  id Int @id @default(autoincrement())
+
+  user_id String @unique
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  @@map("cart")
+}
+
+model CartItem {
+  cart_id    Int
+  product_id Int
+
+  quantity Int @default(1)
+
+  cart    Cart    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@id([cart_id, product_id])
+
+  @@map("cart_items")
+}

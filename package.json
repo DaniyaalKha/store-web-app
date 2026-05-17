@@ -7,11 +7,14 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
+    "db:setup": "pnpm --filter @repo/database db:generate && pnpm --filter @repo/database db:push && pnpm --filter @repo/database db:seed",
     "test": "pnpm --filter @repo/tests test"
   },
   "devDependencies": {
     "@types/node": "^25.6.2",
     "prettier": "^3.7.4",
+    "prisma": "^7.8.0",
+    "tsx": "^4.19.0",
     "turbo": "^2.9.10",
     "typescript": "5.9.2"
   },
