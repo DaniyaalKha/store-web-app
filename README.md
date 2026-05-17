@@ -45,11 +45,15 @@ cd store-web-app
 pnpm install
 ```
 
-4. Create environment variable (.env) files.
+4. Create environment variable (.env) file at the root of the project.
 ```env
-(To be added)
+DATABASE_URL="file:./pc-store.db"
 ```
 
+5. Seed the database.
+```bash
+pnpm db:setup
+```
 
 6. Run the project. (Note: this project uses Turborepo to manage multiple applications.)
 ```bash
