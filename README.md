@@ -17,6 +17,7 @@ Written in TypeScript.
 **Frontend**
 - React
 - Tailwind CSS
+- ThreeJS
 
 **Backend**
 - NextJS
