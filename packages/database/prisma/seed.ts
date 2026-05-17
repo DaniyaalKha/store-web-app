@@ -1,6 +1,20 @@
+import { config as loadEnv } from "dotenv";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { PrismaClient, CategoryName, UserRole, OrderStatus, Prisma } from "@prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-const prisma = new PrismaClient();
+const seedDir = dirname(fileURLToPath(import.meta.url));
+const rootEnvPath = resolve(seedDir, "..", "..", "..", ".env");
+loadEnv({ path: rootEnvPath });
+
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is not set in the .env file at the root.");
+}
+
+const adapter = new PrismaLibSql({ url: databaseUrl });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Seeding database...");
@@ -261,7 +275,7 @@ async function main() {
 
       {
         cart_id: cart2.id,
-        product_id: allProducts[10]!.id,
+        product_id: allProducts[6]!.id,
         quantity: 2,
       },
     ],
@@ -299,7 +313,7 @@ async function main() {
 
       {
         order_id: order1.id,
-        product_id: allProducts[8]!.id,
+        product_id: allProducts[5]!.id,
         quantity: 2,
       },
 
@@ -311,13 +325,13 @@ async function main() {
 
       {
         order_id: order2.id,
-        product_id: allProducts[10]!.id,
+        product_id: allProducts[6]!.id,
         quantity: 1,
       },
 
       {
         order_id: order3.id,
-        product_id: allProducts[18]!.id,
+        product_id: allProducts[7]!.id,
         quantity: 1,
       },
     ],
