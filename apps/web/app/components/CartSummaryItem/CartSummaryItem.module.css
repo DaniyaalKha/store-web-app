@@ -1,0 +1,51 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.imageWrapper {
+  flex-shrink: 0;
+}
+
+.image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.infoWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.productName {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.brandName {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.quantity {
+  font-size: 0.825rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.costWrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.cost {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
