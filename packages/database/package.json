@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
   "scripts": {
     "db:generate": "prisma generate",
     "db:push": "prisma db push",

@@ -5,12 +5,20 @@ import { PrismaClient, CategoryName, UserRole, OrderStatus, Prisma } from "@pris
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 
 const seedDir = dirname(fileURLToPath(import.meta.url));
-const rootEnvPath = resolve(seedDir, "..", "..", "..", ".env");
+const rootDir = resolve(seedDir, "..", "..", "..");
+const rootEnvPath = resolve(rootDir, ".env");
 loadEnv({ path: rootEnvPath });
 
-const databaseUrl = process.env.DATABASE_URL;
+let databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   throw new Error("DATABASE_URL is not set in the .env file at the root.");
+}
+
+// Resolve relative path from root directory
+if (databaseUrl.startsWith("file:./")) {
+  const relativePath = databaseUrl.replace("file:", "");
+  const absolutePath = resolve(rootDir, relativePath);
+  databaseUrl = `file:${absolutePath}`;
 }
 
 const adapter = new PrismaLibSql({ url: databaseUrl });
