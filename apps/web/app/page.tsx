@@ -1,9 +1,17 @@
+'use client';
+
+import { useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProductCategories from './components/ProductCategories';
 import ProductGallery from './components/ProductGallery';
+import { SortOption } from './components/SortModal/SortModal';
 
 export default function Home() {
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+  const [sort, setSort] = useState<SortOption>('none');
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -21,10 +29,20 @@ export default function Home() {
       </section>
 
       {/* product categories */}
-      <ProductCategories />
+      <ProductCategories 
+        onSearchChange={setSearch}
+        onCategoryChange={setCategory}
+        onSortChange={setSort}
+        activeCategory={category}
+        activeSort={sort}
+      />
 
       {/* product gallery */}
-      <ProductGallery />
+      <ProductGallery 
+        search={search}
+        category={category}
+        sort={sort}
+      />
 
       {/* footer */}
       <Footer />

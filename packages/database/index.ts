@@ -38,4 +38,21 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
-export * from "@prisma/client";
+// Explicitly export Prisma types and enums
+export type {
+  User,
+  Brand,
+  Category,
+  Product,
+  Order,
+  OrderProduct,
+  Cart,
+  CartItem,
+} from "@prisma/client";
+
+export {
+  UserRole,
+  OrderStatus,
+  CategoryName,
+  Prisma,
+} from "@prisma/client";
