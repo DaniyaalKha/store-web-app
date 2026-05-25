@@ -24,6 +24,17 @@ if (databaseUrl.startsWith("file:./")) {
 const adapter = new PrismaLibSql({ url: databaseUrl });
 const prisma = new PrismaClient({ adapter });
 
+// Utility function to generate kebab-case slug from product name
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
 async function main() {
   console.log("Seeding database...");
 
@@ -108,6 +119,7 @@ async function main() {
     // Products: CPUs
     {
       name: "Ryzen 7 7800X3D",
+      slug: generateSlug("Ryzen 7 7800X3D"),
       description:
         "Features 8 cores, 16 threads, and a massive 96MB of L3 cache via AMD's 3D V-Cache technology.",
       brand_id: brandMap["AMD"]!,
@@ -120,6 +132,7 @@ async function main() {
 
     {
       name: "Ryzen 9 9950X",
+      slug: generateSlug("Ryzen 9 9950X"),
       description:
         "AMD's flagship 16-core, 32-thread desktop processor built on the Zen 5 architecture.",
       brand_id: brandMap["AMD"]!,
@@ -132,6 +145,7 @@ async function main() {
 
     {
       name: "Core i9-14900K",
+      slug: generateSlug("Core i9-14900K"),
       description:
         "Intel's flagship 24-core desktop processor featuring blazing clock speeds up to 6.0 GHz.",
       brand_id: brandMap["Intel"]!,
@@ -145,6 +159,7 @@ async function main() {
     // Products: GPUs
     {
       name: "RTX 5090 (32GB)",
+      slug: generateSlug("RTX 5090 (32GB)"),
       description:
         "Ultra high-end NVIDIA GPU for 4K and AI workloads.",
       brand_id: brandMap["MSI"]!,
@@ -157,6 +172,7 @@ async function main() {
 
     {
       name: "RTX 5080 (16GB)",
+      slug: generateSlug("RTX 5080 (16GB)"),
       description:
         "High-end gaming NVIDIA GPU for 4K ultra gaming.",
       brand_id: brandMap["MSI"]!,
@@ -169,6 +185,7 @@ async function main() {
 
     {
       name: "RTX 5070 (12GB)",
+      slug: generateSlug("RTX 5070 (12GB)"),
       description:
         "Mid-range NVIDIA GPU ideal for 1440p gaming.",
       brand_id: brandMap["Gigabyte"]!,
@@ -181,6 +198,7 @@ async function main() {
 
     {
       name: "Radeon RX 7600 (8GB)",
+      slug: generateSlug("Radeon RX 7600 (8GB)"),
       description:
         "Entry-level AMD GPU great for 1080p gaming and budget builds.",
       brand_id: brandMap["AMD"]!,
@@ -194,6 +212,7 @@ async function main() {
     // Products: RAM
     {
       name: "Vengeance DDR5 32GB 6000MHz",
+      slug: generateSlug("Vengeance DDR5 32GB 6000MHz"),
       description:
         "High-speed DDR5 memory.",
       brand_id: brandMap["Corsair"]!,

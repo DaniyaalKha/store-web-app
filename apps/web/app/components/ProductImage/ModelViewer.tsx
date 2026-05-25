@@ -5,8 +5,12 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-function Model() {
-  const { scene } = useGLTF('/products/models/RTX_3080.glb');
+interface ModelProps {
+  url: string;
+}
+
+function Model({ url }: ModelProps) {
+  const { scene } = useGLTF(url);
   const modelRef = useRef<THREE.Group>(null);
 
   useFrame((state, delta) => {
@@ -57,7 +61,11 @@ function Lighting() {
   );
 }
 
-export default function ModelViewer() {
+interface ModelViewerProps {
+  modelUrl?: string;
+}
+
+export default function ModelViewer({ modelUrl = '/products/models/RTX_3080.glb' }: ModelViewerProps) {
   return (
     <Canvas
       camera={{ position: [0, 0, 2.5], fov: 45 }}
@@ -68,7 +76,7 @@ export default function ModelViewer() {
       }}
     >
       <Suspense fallback={null}>
-        <Model />
+        <Model url={modelUrl} />
         <Lighting />
       </Suspense>
     </Canvas>

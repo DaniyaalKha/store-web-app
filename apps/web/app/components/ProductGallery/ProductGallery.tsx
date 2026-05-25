@@ -7,6 +7,7 @@ import styles from './ProductGallery.module.css';
 
 interface Product {
   id: number;
+  slug: string;
   image_url: string | null;
   brand: {
     name: string;
@@ -18,6 +19,7 @@ interface Product {
 
 interface DisplayProduct {
   id: number;
+  slug: string;
   image: string;
   brand: string;
   title: string;
@@ -53,6 +55,7 @@ export default function ProductGallery({ search = '', category = '', sort = 'non
         
         const displayProducts = data.map((product) => ({
           id: product.id,
+          slug: product.slug,
           image: product.image_url || '/vercel.svg',
           brand: product.brand.name,
           title: product.name,
@@ -137,6 +140,7 @@ export default function ProductGallery({ search = '', category = '', sort = 'non
           {products.map((product) => (
             <ProductCard
               key={product.id}
+              slug={product.slug}
               image={product.image}
               brand={product.brand}
               title={product.title}
