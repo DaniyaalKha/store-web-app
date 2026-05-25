@@ -47,7 +47,7 @@ pnpm install
 
 4. Create environment variable (.env) file at the root of the project.
 ```env
-DATABASE_URL="file:./pc-store.db"
+DATABASE_URL="file:./packages/database/pc-store.db"
 ```
 
 5. Seed the database.
