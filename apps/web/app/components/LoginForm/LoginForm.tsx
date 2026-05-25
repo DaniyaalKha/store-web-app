@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import FormInput from '../FormInput/FormInput';
 
 interface LoginFormProps {
-  onSubmit?: (email: string, password: string) => void;
+  onSubmit?: (email: string, password: string) => void | Promise<void>;
+  error?: string;
 }
 
 interface FormErrors {
@@ -14,7 +15,7 @@ interface FormErrors {
   password?: string;
 }
 
-export default function LoginForm({ onSubmit }: LoginFormProps) {
+export default function LoginForm({ onSubmit, error }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
@@ -33,8 +34,8 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
     // password validation
     if (!password) {
       newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
     }
 
     setErrors(newErrors);
@@ -81,6 +82,13 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
           .
         </p>
       </div>
+
+      {/* error message */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-700 text-red-400 px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
 
       {/* login form fields */}
       <div className="space-y-4">

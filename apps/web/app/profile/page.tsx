@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Profile from '../components/Profile';
 import OrderListOrder from '../components/OrderListOrder';
 import { Button } from '@/components/ui/button';
 import styles from './profile.module.css';
+import { useAuth } from '@/lib/use-auth';
 
 interface Order {
   id: string;
@@ -34,9 +36,26 @@ const placeholderOrders: Order[] = [
 ];
 
 export default function ProfilePage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+
+  useEffect(() => {
+    if (!loading && (!user || user.role !== 'customer')) {
+      // redirect to home if not authenticated
+      router.push('/');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   const toggleOrderExpand = (orderId: string) => {
     setExpandedOrders((prev) => ({

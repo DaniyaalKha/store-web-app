@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
@@ -7,6 +9,7 @@ import Footer from '../components/Footer';
 import CartItem from '../components/CartItem';
 import { Button } from '@/components/ui/button';
 import styles from './cart.module.css';
+import { useAuth } from '@/lib/use-auth';
 
 interface CartProduct {
   id: string;
@@ -19,6 +22,24 @@ interface CartProduct {
 }
 
 export default function CartPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && (!user || user.role !== 'customer')) {
+      // redirect to home if not authenticated
+      router.push('/');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   const [cartItems, setCartItems] = useState<CartProduct[]>([
     {
       id: '1',

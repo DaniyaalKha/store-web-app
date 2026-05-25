@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaClient, CategoryName, UserRole, OrderStatus, Prisma } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { hashPassword } from "../../../apps/web/lib/hashing.ts";
 
 const seedDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(seedDir, "..", "..", "..");
@@ -14,7 +15,7 @@ if (!databaseUrl) {
   throw new Error("DATABASE_URL is not set in the .env file at the root.");
 }
 
-// Resolve relative path from root directory
+// resolve relative path from root directory
 if (databaseUrl.startsWith("file:./")) {
   const relativePath = databaseUrl.replace("file:", "");
   const absolutePath = resolve(rootDir, relativePath);
@@ -24,15 +25,15 @@ if (databaseUrl.startsWith("file:./")) {
 const adapter = new PrismaLibSql({ url: databaseUrl });
 const prisma = new PrismaClient({ adapter });
 
-// Utility function to generate kebab-case slug from product name
+// utility function to generate kebab-case slug from product name
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    .replace(/[^\w\s-]/g, '') // remove special characters
+    .replace(/\s+/g, '-') // replace spaces with hyphens
+    .replace(/-+/g, '-') // Rrplace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, ''); // remove leading/trailing hyphens
 }
 
 async function main() {
@@ -229,47 +230,67 @@ async function main() {
   });
 
   // users
+  const hashedPassword = await hashPassword("Testing123");
+
   const admin = await prisma.user.create({
-    data: {
-      email: "admin@test.com",
-      first_name: "Admin",
-      last_name: "User",
-      password_hash: "hashed_admin_password",
-      role: UserRole.admin,
-      address: "1 Admin Street",
-      city: "Sydney",
-      state: "NSW",
-      country: "Australia",
-    },
-  });
+  data: {
+    name: "Admin User",
+    email: "admin@test.com",
+    emailVerified: true,
 
-  const customer1 = await prisma.user.create({
-    data: {
-      email: "john@test.com",
-      first_name: "John",
-      last_name: "Doe",
-      password_hash: "hashed_password_1",
-      role: UserRole.customer,
-      address: "123 Placeholder St",
-      city: "Sydney",
-      state: "NSW",
-      country: "Australia",
-    },
-  });
+    firstName: "Admin",
+    lastName: "User",
 
-  const customer2 = await prisma.user.create({
-    data: {
-      email: "jane@test.com",
-      first_name: "Jane",
-      last_name: "Smith",
-      password_hash: "hashed_password_2",
-      role: UserRole.customer,
-      address: "321 Example Ave",
-      city: "Melbourne",
-      state: "VIC",
-      country: "Australia",
-    },
-  });
+    password: hashedPassword,
+
+    role: UserRole.admin,
+
+    address: "1 Admin Street",
+    city: "Sydney",
+    state: "NSW",
+    country: "Australia",
+  },
+});
+
+const customer1 = await prisma.user.create({
+  data: {
+    name: "John Doe",
+    email: "john@test.com",
+    emailVerified: true,
+
+    firstName: "John",
+    lastName: "Doe",
+
+    password: hashedPassword,
+
+    role: UserRole.customer,
+
+    address: "123 Placeholder St",
+    city: "Sydney",
+    state: "NSW",
+    country: "Australia",
+  },
+});
+
+const customer2 = await prisma.user.create({
+  data: {
+    name: "Jane Smith",
+    email: "jane@test.com",
+    emailVerified: true,
+
+    firstName: "Jane",
+    lastName: "Smith",
+
+    password: hashedPassword,
+
+    role: UserRole.customer,
+
+    address: "321 Example Ave",
+    city: "Melbourne",
+    state: "VIC",
+    country: "Australia",
+  },
+});
 
   // carts
   const cart1 = await prisma.cart.create({
@@ -363,7 +384,6 @@ async function main() {
       },
     ],
   });
-
 
   console.log("Database successfully seeded.");
 }
