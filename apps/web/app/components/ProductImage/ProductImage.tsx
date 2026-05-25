@@ -31,8 +31,10 @@ export default function ProductImage({
             src={displayImage}
             alt={productName}
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className={styles.image}
             priority
+            loading="eager"
           />
         </div>
       )}
