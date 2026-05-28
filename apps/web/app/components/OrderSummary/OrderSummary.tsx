@@ -76,7 +76,7 @@ export default function OrderSummary({
       {/* order total */}
       <div className={styles.totalRow}>
         <span className={styles.totalLabel}>Order total:</span>
-        <span className={styles.totalAmount}>{total}</span>
+        <span className={styles.totalAmount}>${total}</span>
       </div>
     </div>
   );
