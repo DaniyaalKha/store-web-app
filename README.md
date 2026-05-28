@@ -22,6 +22,7 @@ Written in TypeScript.
 **Backend**
 - NextJS
 - Prisma
+- BetterAuth (and Argon2)
 
 ## Getting Started
 **Prerequisites**
@@ -59,6 +60,11 @@ pnpm db:setup
 ```bash
 pnpm dev
 ```
+
+**Testing accounts** 
+All accounts have the password "Testing123".
+- user accounts: john@test.com jane@test.com 
+- admin accounts: admin@test.com
 
 **Deployment**  
 This application is deployed on Vercel available here: (to be added).
