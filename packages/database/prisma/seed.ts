@@ -241,8 +241,6 @@ async function main() {
     firstName: "Admin",
     lastName: "User",
 
-    password: hashedPassword,
-
     role: UserRole.admin,
 
     address: "1 Admin Street",
@@ -251,6 +249,15 @@ async function main() {
     country: "Australia",
   },
 });
+
+  await prisma.account.create({
+    data: {
+      userId: admin.id,
+      providerId: "credential",
+      accountId: admin.email,
+      password: hashedPassword,
+    },
+  });
 
 const customer1 = await prisma.user.create({
   data: {
@@ -261,8 +268,6 @@ const customer1 = await prisma.user.create({
     firstName: "John",
     lastName: "Doe",
 
-    password: hashedPassword,
-
     role: UserRole.customer,
 
     address: "123 Placeholder St",
@@ -271,6 +276,15 @@ const customer1 = await prisma.user.create({
     country: "Australia",
   },
 });
+
+  await prisma.account.create({
+    data: {
+      userId: customer1.id,
+      providerId: "credential",
+      accountId: customer1.email,
+      password: hashedPassword,
+    },
+  });
 
 const customer2 = await prisma.user.create({
   data: {
@@ -281,8 +295,6 @@ const customer2 = await prisma.user.create({
     firstName: "Jane",
     lastName: "Smith",
 
-    password: hashedPassword,
-
     role: UserRole.customer,
 
     address: "321 Example Ave",
@@ -291,6 +303,15 @@ const customer2 = await prisma.user.create({
     country: "Australia",
   },
 });
+
+  await prisma.account.create({
+    data: {
+      userId: customer2.id,
+      providerId: "credential",
+      accountId: customer2.email,
+      password: hashedPassword,
+    },
+  });
 
   // carts
   const cart1 = await prisma.cart.create({
