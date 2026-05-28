@@ -43,12 +43,19 @@
   font-weight: 600;
   color: hsl(var(--foreground));
   line-height: 1.2;
+  margin-bottom: 0.5rem;
 }
 
-.profileRole {
-  font-size: 1rem;
-  color: hsl(var(--muted-foreground));
-  font-weight: 500;
+.editButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+}
+
+.editIcon {
+  width: 1rem;
+  height: 1rem;
 }
 
 @media (max-width: 640px) {

@@ -77,6 +77,14 @@
   gap: 1rem;
 }
 
+.loadingText,
+.noOrdersText {
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.95rem;
+  padding: 2rem;
+}
+
 @media (max-width: 640px) {
   .container {
     padding: 1.5rem;
