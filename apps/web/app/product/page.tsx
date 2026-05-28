@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductImage from '../components/ProductImage';
@@ -25,6 +26,7 @@ interface Product {
 }
 
 export default function ProductView() {
+  const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,8 +83,28 @@ export default function ProductView() {
     }
   }, [successMessage]);
 
-  const handleBuyNow = () => {
-    console.log('Buy now clicked');
+  const handleBuyNow = async () => {
+    if (!product) return;
+    try {
+      setIsAddingToCart(true);
+      const response = await fetch('/api/user/orders/buy-now', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id, quantity: 1 }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      const data = await response.json();
+      router.push(`/order-confirmation?orderId=${data.orderId}`);
+    } catch (err) {
+      console.error('Error creating order:', err);
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   if (loading) {

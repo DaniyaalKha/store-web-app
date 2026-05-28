@@ -6,10 +6,14 @@ import styles from './BillingInfo.module.css';
 
 interface BillingInfoProps {
   customerName?: string;
+  email?: string;
+  address?: string;
 }
 
 export default function BillingInfo({
   customerName = '(Name)',
+  email = '(Email)',
+  address = '(Address)',
 }: BillingInfoProps) {
   return (
     <div className={styles.container}>
@@ -32,22 +36,22 @@ export default function BillingInfo({
           <tbody>
             <tr>
               <td className={styles.label}>Name:</td>
-              <td className={styles.value}>Lorem ipsum</td>
+              <td className={styles.value}>{customerName}</td>
             </tr>
             <tr>
               <td className={styles.label}>Address:</td>
-              <td className={styles.value}>Lorem ipsum</td>
+              <td className={styles.value}>{address}</td>
             </tr>
             <tr>
               <td className={styles.label}>Email:</td>
-              <td className={styles.value}>Lorem ipsum</td>
+              <td className={styles.value}>{email}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       {/* Return to store button */}
-      <Link href="/store">
+      <Link href="/">
         <Button className={styles.returnButton} variant="outline">
           Return to store
         </Button>

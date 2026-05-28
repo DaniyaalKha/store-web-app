@@ -18,6 +18,7 @@ export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, isLoading: cartLoading } = useCart();
   const [isRemoving, setIsRemoving] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'customer')) {
@@ -53,6 +54,29 @@ export default function CartPage() {
       console.error('Error removing item:', error);
     } finally {
       setIsRemoving(null);
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      setIsCheckingOut(true);
+      const response = await fetch('/api/user/orders/checkout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to checkout');
+      }
+
+      const data = await response.json();
+      router.push(`/order-confirmation?orderId=${data.orderId}`);
+    } catch (error) {
+      console.error('Error during checkout:', error);
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -121,7 +145,13 @@ export default function CartPage() {
               </div>
 
               {/* checkout button */}
-              <Button className={styles.checkoutButton}>Checkout</Button>
+              <Button 
+                className={styles.checkoutButton}
+                onClick={handleCheckout}
+                disabled={isCheckingOut}
+              >
+                {isCheckingOut ? 'Processing...' : 'Checkout'}
+              </Button>
             </>
           ) : (
             <div className={styles.emptyCart}>
