@@ -173,6 +173,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetch('/api/auth/sign-out', {
         method: 'POST',
         credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
       });
       setUser(null);
     } catch (error) {
