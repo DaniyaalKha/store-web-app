@@ -3,12 +3,22 @@
 import OrderSummary from '../OrderSummary';
 import styles from './OrderListOrder.module.css';
 
+interface OrderProduct {
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
 interface Order {
   id: string;
   date: string;
   orderNumber: string;
-  paymentMethod: string;
+  status?: string;
   total: string;
+  paymentMethod?: string;
+  products?: OrderProduct[];
+  orderTime?: string;
 }
 
 interface OrderListOrderProps {
@@ -43,6 +53,8 @@ export default function OrderListOrder({
             orderNumber={order.orderNumber}
             paymentMethod={order.paymentMethod}
             total={order.total}
+            status={order.status}
+            products={order.products}
           />
         </div>
       )}

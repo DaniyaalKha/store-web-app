@@ -1,11 +1,13 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import styles from './CartItem.module.css';
 
 interface CartItemProps {
   id: string;
+  slug: string;
   image: string;
   productName: string;
   brandName: string;
@@ -13,10 +15,13 @@ interface CartItemProps {
   cost: string;
   onQuantityChange: (id: string, quantity: number) => void;
   onDelete: (id: string) => void;
+  isUpdating?: boolean;
+  isRemoving?: boolean;
 }
 
 export default function CartItem({
   id,
+  slug,
   image,
   productName,
   brandName,
@@ -24,6 +29,8 @@ export default function CartItem({
   cost,
   onQuantityChange,
   onDelete,
+  isUpdating = false,
+  isRemoving = false,
 }: CartItemProps) {
   const [inputValue, setInputValue] = useState(quantity.toString());
 
@@ -75,7 +82,11 @@ export default function CartItem({
 
       {/* product info */}
       <div className={styles.infoWrapper}>
-        <h4 className={styles.productName}>{productName}</h4>
+        <Link href={`/product/${slug}`}>
+          <h4 className={styles.productName} style={{ color: '#ffffff', cursor: 'pointer', textDecoration: 'none' }}>
+            {productName}
+          </h4>
+        </Link>
         <p className={styles.brandName}>{brandName}</p>
       </div>
 
@@ -85,6 +96,7 @@ export default function CartItem({
           className={styles.quantityButton}
           onClick={handleDecrement}
           aria-label="Decrease quantity"
+          disabled={isUpdating || isRemoving}
         >
           −
         </button>
@@ -94,11 +106,13 @@ export default function CartItem({
           value={inputValue}
           onChange={handleInputChange}
           onBlur={handleInputBlur}
+          disabled={isUpdating || isRemoving}
         />
         <button
           className={styles.quantityButton}
           onClick={handleIncrement}
           aria-label="Increase quantity"
+          disabled={isUpdating || isRemoving}
         >
           +
         </button>
@@ -106,7 +120,7 @@ export default function CartItem({
 
       {/* cost */}
       <div className={styles.costWrapper}>
-        <span className={styles.cost}>{cost}</span>
+        <span className={styles.cost}>${cost}</span>
       </div>
 
       {/* delete button */}
@@ -114,8 +128,9 @@ export default function CartItem({
         className={styles.deleteButton}
         onClick={() => onDelete(id)}
         aria-label={`Delete ${productName}`}
+        disabled={isRemoving || isUpdating}
       >
-        ✕
+        {isRemoving ? '...' : '✕'}
       </button>
     </div>
   );

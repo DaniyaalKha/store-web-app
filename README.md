@@ -22,6 +22,7 @@ Written in TypeScript.
 **Backend**
 - NextJS
 - Prisma
+- BetterAuth (and Argon2)
 
 ## Getting Started
 **Prerequisites**
@@ -47,7 +48,9 @@ pnpm install
 
 4. Create environment variable (.env) file at the root of the project.
 ```env
-DATABASE_URL="file:./pc-store.db"
+DATABASE_URL="file:./packages/database/pc-store.db"
+BETTER_AUTH_SECRET="this-should-be-replaced-with-a-better-secret-key"
+BETTER_AUTH_URL="http://localhost:3000"
 ```
 
 5. Seed the database.
@@ -59,6 +62,11 @@ pnpm db:setup
 ```bash
 pnpm dev
 ```
+
+**Testing accounts** 
+All accounts have the password "Testing123".
+- user accounts: john@test.com jane@test.com 
+- admin accounts: admin@test.com
 
 **Deployment**  
 This application is deployed on Vercel available here: (to be added).

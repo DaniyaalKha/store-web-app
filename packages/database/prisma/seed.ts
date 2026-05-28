@@ -3,18 +3,38 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaClient, CategoryName, UserRole, OrderStatus, Prisma } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { hashPassword } from "../../../apps/web/lib/hashing.ts";
 
 const seedDir = dirname(fileURLToPath(import.meta.url));
-const rootEnvPath = resolve(seedDir, "..", "..", "..", ".env");
+const rootDir = resolve(seedDir, "..", "..", "..");
+const rootEnvPath = resolve(rootDir, ".env");
 loadEnv({ path: rootEnvPath });
 
-const databaseUrl = process.env.DATABASE_URL;
+let databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   throw new Error("DATABASE_URL is not set in the .env file at the root.");
 }
 
+// resolve relative path from root directory
+if (databaseUrl.startsWith("file:./")) {
+  const relativePath = databaseUrl.replace("file:", "");
+  const absolutePath = resolve(rootDir, relativePath);
+  databaseUrl = `file:${absolutePath}`;
+}
+
 const adapter = new PrismaLibSql({ url: databaseUrl });
 const prisma = new PrismaClient({ adapter });
+
+// utility function to generate kebab-case slug from product name
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // remove special characters
+    .replace(/\s+/g, '-') // replace spaces with hyphens
+    .replace(/-+/g, '-') // Rrplace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, ''); // remove leading/trailing hyphens
+}
 
 async function main() {
   console.log("Seeding database...");
@@ -100,6 +120,7 @@ async function main() {
     // Products: CPUs
     {
       name: "Ryzen 7 7800X3D",
+      slug: generateSlug("Ryzen 7 7800X3D"),
       description:
         "Features 8 cores, 16 threads, and a massive 96MB of L3 cache via AMD's 3D V-Cache technology.",
       brand_id: brandMap["AMD"]!,
@@ -112,6 +133,7 @@ async function main() {
 
     {
       name: "Ryzen 9 9950X",
+      slug: generateSlug("Ryzen 9 9950X"),
       description:
         "AMD's flagship 16-core, 32-thread desktop processor built on the Zen 5 architecture.",
       brand_id: brandMap["AMD"]!,
@@ -124,6 +146,7 @@ async function main() {
 
     {
       name: "Core i9-14900K",
+      slug: generateSlug("Core i9-14900K"),
       description:
         "Intel's flagship 24-core desktop processor featuring blazing clock speeds up to 6.0 GHz.",
       brand_id: brandMap["Intel"]!,
@@ -137,6 +160,7 @@ async function main() {
     // Products: GPUs
     {
       name: "RTX 5090 (32GB)",
+      slug: generateSlug("RTX 5090 (32GB)"),
       description:
         "Ultra high-end NVIDIA GPU for 4K and AI workloads.",
       brand_id: brandMap["MSI"]!,
@@ -149,6 +173,7 @@ async function main() {
 
     {
       name: "RTX 5080 (16GB)",
+      slug: generateSlug("RTX 5080 (16GB)"),
       description:
         "High-end gaming NVIDIA GPU for 4K ultra gaming.",
       brand_id: brandMap["MSI"]!,
@@ -161,6 +186,7 @@ async function main() {
 
     {
       name: "RTX 5070 (12GB)",
+      slug: generateSlug("RTX 5070 (12GB)"),
       description:
         "Mid-range NVIDIA GPU ideal for 1440p gaming.",
       brand_id: brandMap["Gigabyte"]!,
@@ -173,6 +199,7 @@ async function main() {
 
     {
       name: "Radeon RX 7600 (8GB)",
+      slug: generateSlug("Radeon RX 7600 (8GB)"),
       description:
         "Entry-level AMD GPU great for 1080p gaming and budget builds.",
       brand_id: brandMap["AMD"]!,
@@ -186,6 +213,7 @@ async function main() {
     // Products: RAM
     {
       name: "Vengeance DDR5 32GB 6000MHz",
+      slug: generateSlug("Vengeance DDR5 32GB 6000MHz"),
       description:
         "High-speed DDR5 memory.",
       brand_id: brandMap["Corsair"]!,
@@ -202,45 +230,86 @@ async function main() {
   });
 
   // users
+  const hashedPassword = await hashPassword("Testing123");
+
   const admin = await prisma.user.create({
+  data: {
+    name: "Admin User",
+    email: "admin@test.com",
+    emailVerified: true,
+
+    firstName: "Admin",
+    lastName: "User",
+
+    role: UserRole.admin,
+
+    address: "1 Admin Street",
+    city: "Sydney",
+    state: "NSW",
+    country: "Australia",
+  },
+});
+
+  await prisma.account.create({
     data: {
-      email: "admin@test.com",
-      first_name: "Admin",
-      last_name: "User",
-      password_hash: "hashed_admin_password",
-      role: UserRole.admin,
-      address: "1 Admin Street",
-      city: "Sydney",
-      state: "NSW",
-      country: "Australia",
+      userId: admin.id,
+      providerId: "credential",
+      accountId: admin.email,
+      password: hashedPassword,
     },
   });
 
-  const customer1 = await prisma.user.create({
+const customer1 = await prisma.user.create({
+  data: {
+    name: "John Doe",
+    email: "john@test.com",
+    emailVerified: true,
+
+    firstName: "John",
+    lastName: "Doe",
+
+    role: UserRole.customer,
+
+    address: "123 Placeholder St",
+    city: "Sydney",
+    state: "NSW",
+    country: "Australia",
+  },
+});
+
+  await prisma.account.create({
     data: {
-      email: "john@test.com",
-      first_name: "John",
-      last_name: "Doe",
-      password_hash: "hashed_password_1",
-      role: UserRole.customer,
-      address: "123 Placeholder St",
-      city: "Sydney",
-      state: "NSW",
-      country: "Australia",
+      userId: customer1.id,
+      providerId: "credential",
+      accountId: customer1.email,
+      password: hashedPassword,
     },
   });
 
-  const customer2 = await prisma.user.create({
+const customer2 = await prisma.user.create({
+  data: {
+    name: "Jane Smith",
+    email: "jane@test.com",
+    emailVerified: true,
+
+    firstName: "Jane",
+    lastName: "Smith",
+
+    role: UserRole.customer,
+
+    address: "321 Example Ave",
+    city: "Melbourne",
+    state: "VIC",
+    country: "Australia",
+  },
+});
+
+  await prisma.account.create({
     data: {
-      email: "jane@test.com",
-      first_name: "Jane",
-      last_name: "Smith",
-      password_hash: "hashed_password_2",
-      role: UserRole.customer,
-      address: "321 Example Ave",
-      city: "Melbourne",
-      state: "VIC",
-      country: "Australia",
+      userId: customer2.id,
+      providerId: "credential",
+      accountId: customer2.email,
+      password: hashedPassword,
     },
   });
 
@@ -336,7 +405,6 @@ async function main() {
       },
     ],
   });
-
 
   console.log("Database successfully seeded.");
 }

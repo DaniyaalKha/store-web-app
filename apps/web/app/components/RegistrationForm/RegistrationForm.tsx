@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import FormInput from '../FormInput/FormInput';
 
 interface RegistrationFormProps {
-  onSubmit?: (formData: RegistrationData) => void;
+  onSubmit?: (formData: RegistrationData) => void | Promise<void>;
+  error?: string;
 }
 
 export interface RegistrationData {
@@ -33,7 +34,7 @@ interface FormErrors {
   country?: string;
 }
 
-export default function RegistrationForm({ onSubmit }: RegistrationFormProps) {
+export default function RegistrationForm({ onSubmit, error }: RegistrationFormProps) {
   const [formData, setFormData] = useState<RegistrationData>({
     email: '',
     firstName: '',
@@ -79,8 +80,8 @@ export default function RegistrationForm({ onSubmit }: RegistrationFormProps) {
     // password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
     }
 
     // confirm password validation
@@ -162,6 +163,13 @@ export default function RegistrationForm({ onSubmit }: RegistrationFormProps) {
           .
         </p>
       </div>
+
+      {/* error message */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-700 text-red-400 px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Section 1: Account Information */}
       <div className="space-y-4">

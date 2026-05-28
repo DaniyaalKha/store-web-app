@@ -6,11 +6,13 @@ import styles from './ProductActions.module.css';
 interface ProductActionsProps {
   onAddToCart?: () => void;
   onBuyNow?: () => void;
+  isLoading?: boolean;
 }
 
 export default function ProductActions({
   onAddToCart,
   onBuyNow,
+  isLoading = false,
 }: ProductActionsProps) {
   return (
     <div className={styles.container}>
@@ -18,8 +20,9 @@ export default function ProductActions({
       <Button
         className={styles.addToCart}
         onClick={onAddToCart}
+        disabled={isLoading}
       >
-        Add to cart
+        {isLoading ? 'Adding...' : 'Add to cart'}
       </Button>
 
       {/* Buy Now button */}
@@ -27,6 +30,7 @@ export default function ProductActions({
         variant="outline"
         className={styles.buyNow}
         onClick={onBuyNow}
+        disabled={isLoading}
       >
         Buy now
       </Button>
