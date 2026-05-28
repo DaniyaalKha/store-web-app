@@ -6,6 +6,8 @@ import Footer from '../../components/Footer';
 import ProductImage from '../../components/ProductImage';
 import ProductInfo from '../../components/ProductInfo';
 import ProductActions from '../../components/ProductActions';
+import Toast from '../../components/Toast/Toast';
+import { useCart } from '@/lib/cart-context';
 
 interface Product {
   id: number;
@@ -33,6 +35,9 @@ export default function ProductViewPage({ params }: PageProps) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -54,9 +59,25 @@ export default function ProductViewPage({ params }: PageProps) {
     fetchProduct();
   }, [slug]);
 
-  const handleAddToCart = () => {
-    console.log('Added to cart');
+  const handleAddToCart = async () => {
+    if (!product) return;
+    try {
+      setIsAddingToCart(true);
+      await addToCart(product.id);
+      setSuccessMessage(true);
+    } catch (err) {
+      console.error('Error adding to cart:', err);
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => setSuccessMessage(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   const handleBuyNow = () => {
     console.log('Buy now clicked');
@@ -106,14 +127,22 @@ export default function ProductViewPage({ params }: PageProps) {
               productName={product.name}
               brandName={product.brand.name}
               price={typeof product.price === 'string' ? parseFloat(product.price) : product.price}
-              description={product.description}
+              description={product.description || undefined}
               stockQuantity={product.stock_quantity}
               brandLogo={product.brand.logo_url}
             />
+            {successMessage && (
+              <Toast
+                message="Added to cart!"
+                isVisible={successMessage}
+                onClose={() => setSuccessMessage(false)}
+              />
+            )}
             <div className="mt-6">
               <ProductActions
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
+                isLoading={isAddingToCart}
               />
             </div>
           </div>

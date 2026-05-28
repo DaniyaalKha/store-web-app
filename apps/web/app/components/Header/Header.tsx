@@ -7,11 +7,13 @@ import { ShoppingCart, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import styles from './Header.module.css';
 import { useAuth } from '@/lib/use-auth';
+import { useCart } from '@/lib/cart-context';
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { totalQuantity } = useCart();
 
   const isActive = (href: string) => {
     // check which page matches for border (/ for homepage or href for others)
@@ -130,7 +132,9 @@ export default function Header() {
             <Link href="/cart" className={styles.cartLink}>
               <div className={styles.cartIcon}>
                 <ShoppingCart size={20} />
-                <span className={styles.cartBadge}>123</span>
+                {totalQuantity > 0 && (
+                  <span className={styles.cartBadge}>{totalQuantity}</span>
+                )}
               </div>
             </Link>
           )}

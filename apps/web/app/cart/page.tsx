@@ -10,20 +10,14 @@ import CartItem from '../components/CartItem';
 import { Button } from '@/components/ui/button';
 import styles from './cart.module.css';
 import { useAuth } from '@/lib/use-auth';
-
-interface CartProduct {
-  id: string;
-  image: string;
-  productName: string;
-  brandName: string;
-  quantity: number;
-  cost: string;
-  pricePerUnit: number;
-}
+import { useCart, type CartItem as CartItemType } from '@/lib/cart-context';
 
 export default function CartPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const { cartItems, removeFromCart, updateQuantity, isLoading: cartLoading } = useCart();
+  const [isRemoving, setIsRemoving] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'customer')) {
@@ -32,7 +26,7 @@ export default function CartPage() {
     }
   }, [user, loading, router]);
 
-  if (loading) {
+  if (loading || cartLoading) {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center">
         <p>Loading...</p>
@@ -40,67 +34,31 @@ export default function CartPage() {
     );
   }
 
-  const [cartItems, setCartItems] = useState<CartProduct[]>([
-    {
-      id: '1',
-      image: '/vercel.svg',
-      productName: 'Product',
-      brandName: 'Brand',
-      quantity: 1,
-      cost: '$100',
-      pricePerUnit: 100,
-    },
-    {
-      id: '2',
-      image: '/vercel.svg',
-      productName: 'Product',
-      brandName: 'Brand',
-      quantity: 1,
-      cost: '$100',
-      pricePerUnit: 100,
-    },
-    {
-      id: '3',
-      image: '/vercel.svg',
-      productName: 'Product',
-      brandName: 'Brand',
-      quantity: 1,
-      cost: '$100',
-      pricePerUnit: 100,
-    },
-    {
-      id: '4',
-      image: '/vercel.svg',
-      productName: 'Product',
-      brandName: 'Brand',
-      quantity: 1,
-      cost: '$100',
-      pricePerUnit: 100,
-    },    
-  ]);
-
-  const handleQuantityChange = (id: string, newQuantity: number) => {
-    setCartItems(
-      cartItems.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            quantity: newQuantity,
-            cost: `$${(item.pricePerUnit * newQuantity).toFixed(2)}`,
-          };
-        }
-        return item;
-      })
-    );
+  const handleQuantityChange = async (id: string, newQuantity: number) => {
+    try {
+      setIsUpdating(id);
+      await updateQuantity(id, newQuantity);
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    } finally {
+      setIsUpdating(null);
+    }
   };
 
-  const handleDeleteItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+  const handleDeleteItem = async (id: string) => {
+    try {
+      setIsRemoving(id);
+      await removeFromCart(id);
+    } catch (error) {
+      console.error('Error removing item:', error);
+    } finally {
+      setIsRemoving(null);
+    }
   };
 
   const calculateTotal = () => {
     return cartItems
-      .reduce((sum, item) => sum + item.pricePerUnit * item.quantity, 0)
+      .reduce((sum, item) => sum + parseFloat(item.cost), 0)
       .toFixed(2);
   };
 
@@ -129,6 +87,7 @@ export default function CartPage() {
                   <CartItem
                     key={item.id}
                     id={item.id}
+                    slug={item.slug}
                     image={item.image}
                     productName={item.productName}
                     brandName={item.brandName}
@@ -136,6 +95,8 @@ export default function CartPage() {
                     cost={item.cost}
                     onQuantityChange={handleQuantityChange}
                     onDelete={handleDeleteItem}
+                    isUpdating={isUpdating === item.id}
+                    isRemoving={isRemoving === item.id}
                   />
                 ))}
               </div>
