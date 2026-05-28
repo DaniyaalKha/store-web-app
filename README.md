@@ -49,6 +49,8 @@ pnpm install
 4. Create environment variable (.env) file at the root of the project.
 ```env
 DATABASE_URL="file:./packages/database/pc-store.db"
+BETTER_AUTH_SECRET="this-should-be-replaced-with-a-better-secret-key"
+BETTER_AUTH_URL="http://localhost:3000"
 ```
 
 5. Seed the database.
