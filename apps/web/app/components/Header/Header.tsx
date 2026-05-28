@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { ShoppingCart, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import styles from './Header.module.css';
@@ -10,7 +10,16 @@ import { useAuth } from '@/lib/use-auth';
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  const isActive = (href: string) => {
+    // check which page matches for border (/ for homepage or href for others)
+    if (href === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(href);
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -39,7 +48,10 @@ export default function Header() {
           {!user && (
             <>
               <Link href="/" className={styles.navLink}>
-                <Button variant="ghost" className={styles.navButton}>
+                <Button
+                  variant="ghost"
+                  className={`${styles.navButton} ${isActive('/') ? styles.active : ''}`}
+                >
                   Store
                 </Button>
               </Link>
@@ -50,12 +62,18 @@ export default function Header() {
           {user && user.role === 'customer' && (
             <>
               <Link href="/" className={styles.navLink}>
-                <Button variant="ghost" className={styles.navButton}>
+                <Button
+                  variant="ghost"
+                  className={`${styles.navButton} ${isActive('/') ? styles.active : ''}`}
+                >
                   Store
                 </Button>
               </Link>
               <Link href="/profile" className={styles.navLink}>
-                <Button variant="ghost" className={styles.navButton}>
+                <Button
+                  variant="ghost"
+                  className={`${styles.navButton} ${isActive('/profile') ? styles.active : ''}`}
+                >
                   Profile
                 </Button>
               </Link>
@@ -66,12 +84,18 @@ export default function Header() {
           {user && user.role === 'admin' && (
             <>
               <Link href="/" className={styles.navLink}>
-                <Button variant="ghost" className={styles.navButton}>
+                <Button
+                  variant="ghost"
+                  className={`${styles.navButton} ${isActive('/') ? styles.active : ''}`}
+                >
                   Store
                 </Button>
               </Link>
               <Link href="/admin" className={styles.navLink}>
-                <Button variant="ghost" className={styles.navButton}>
+                <Button
+                  variant="ghost"
+                  className={`${styles.navButton} ${isActive('/admin') ? styles.active : ''}`}
+                >
                   Admin
                 </Button>
               </Link>

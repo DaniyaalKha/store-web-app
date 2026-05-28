@@ -57,6 +57,11 @@
   color: hsl(var(--foreground));
 }
 
+.navButton.active {
+  border-bottom: 2px solid hsl(var(--foreground));
+  padding-bottom: calc(0.5rem - 2px);
+}
+
 .loginButton {
   background-color: hsl(var(--primary));
   color: hsl(var(--primary-foreground));
