@@ -9,6 +9,7 @@ interface ProfileProps {
   lastName?: string;
   imageUrl?: string;
   onEditClick?: () => void;
+  hideEditButton?: boolean;
 }
 
 export default function Profile({
@@ -16,6 +17,7 @@ export default function Profile({
   lastName = 'LASTNAME',
   imageUrl = '/vercel.svg',
   onEditClick,
+  hideEditButton = false,
 }: ProfileProps) {
   return (
     <section className={styles.container}>
@@ -28,14 +30,16 @@ export default function Profile({
           <h2 className={styles.profileName}>
             {firstName} {lastName}
           </h2>
-          <Button
-            onClick={onEditClick}
-            variant="outline"
-            className={styles.editButton}
-          >
-            <Pencil className={styles.editIcon} />
-            Edit Details
-          </Button>
+          {!hideEditButton && (
+            <Button
+              onClick={onEditClick}
+              variant="outline"
+              className={styles.editButton}
+            >
+              <Pencil className={styles.editIcon} />
+              Edit Details
+            </Button>
+          )}
         </div>
       </div>
     </section>

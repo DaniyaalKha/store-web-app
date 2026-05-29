@@ -4,9 +4,10 @@ import Image from 'next/image';
 import styles from './ManageProductRow.module.css';
 
 interface Product {
-  id: string;
+  id: number;
   name: string;
   image: string;
+  brandName: string;
 }
 
 interface ManageProductRowProps {
@@ -30,8 +31,8 @@ export default function ManageProductRow({ product, onEdit }: ManageProductRowPr
         />
       </div>
       <div className={styles.info}>
-        <p className={styles.id}>{product.id}</p>
-        <p className={styles.name}>{product.name}</p>
+        <p className={styles.id}>ID: {product.id}</p>
+        <p className={styles.name}>{product.brandName} {product.name}</p>
       </div>
       <div className={styles.arrow}>→</div>
     </div>

@@ -1,34 +1,31 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import ModelViewer from '../ProductImage/ModelViewer';
 import styles from './ProductEditModal.module.css';
 
 interface ProductEditData {
-  id: string;
+  id: number;
   name: string;
-  brand: string;
+  brandName: string;
   category: string;
-  image: string;
-  model3D: string;
+  imageUrl: string;
+  modelUrl: string;
   price: string;
+  description: string;
+  stockQuantity: string;
+  isNew: boolean;
 }
 
 interface ProductEditModalProps {
   isOpen: boolean;
   product: ProductEditData;
   onConfirm: (product: ProductEditData) => void;
-  onDelete: (productId: string) => void;
+  onDelete: (productId: number) => void;
   onClose: () => void;
 }
-
-const brands = [
-  'Brand A',
-  'Brand B',
-  'Brand C',
-  'Brand D',
-  'Brand E',
-];
 
 const categories = ['CPU', 'Graphics', 'Memory', 'Storage', 'Motherboards', 'Power', 'Cooling', 'Cases', 'Accessories'];
 
@@ -47,7 +44,7 @@ export default function ProductEditModal({
   }, [product]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -80,9 +77,7 @@ export default function ProductEditModal({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 className={styles.title}>
-            {formData.id.startsWith('PROD-') && formData.name === ''
-              ? 'Add Product'
-              : 'Edit Product'}
+            {formData.isNew ? 'Add Product' : 'Edit Product'}
           </h2>
           <button
             className={styles.closeButton}
@@ -110,23 +105,18 @@ export default function ProductEditModal({
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="brand" className={styles.label}>
+            <label htmlFor="brandName" className={styles.label}>
               Brand:
             </label>
-            <select
-              id="brand"
-              name="brand"
-              value={formData.brand}
+            <input
+              id="brandName"
+              type="text"
+              name="brandName"
+              value={formData.brandName}
               onChange={handleChange}
-              className={styles.select}
-            >
-              <option value="">Select a brand</option>
-              {brands.map((brand) => (
-                <option key={brand} value={brand}>
-                  {brand}
-                </option>
-              ))}
-            </select>
+              className={styles.input}
+              placeholder="Brand name"
+            />
           </div>
 
           <div className={styles.formGroup}>
@@ -150,36 +140,6 @@ export default function ProductEditModal({
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="image" className={styles.label}>
-              Image (Filepath):
-            </label>
-            <input
-              id="image"
-              type="text"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="/path/to/image.jpg"
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="model3D" className={styles.label}>
-              3D Model (Filepath):
-            </label>
-            <input
-              id="model3D"
-              type="text"
-              name="model3D"
-              value={formData.model3D}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="/path/to/model.gltf"
-            />
-          </div>
-
-          <div className={styles.formGroup}>
             <label htmlFor="price" className={styles.label}>
               Price:
             </label>
@@ -193,16 +153,98 @@ export default function ProductEditModal({
               placeholder="0.00"
             />
           </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="stockQuantity" className={styles.label}>
+              Stock Quantity:
+            </label>
+            <input
+              id="stockQuantity"
+              type="number"
+              name="stockQuantity"
+              value={formData.stockQuantity}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="0"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="description" className={styles.label}>
+              Description:
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className={styles.textarea}
+              placeholder="Product description"
+              rows={3}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="imageUrl" className={styles.label}>
+              Image (Filepath):
+            </label>
+            <input
+              id="imageUrl"
+              type="text"
+              name="imageUrl"
+              value={formData.imageUrl}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="/path/to/image.jpg"
+            />
+            {formData.imageUrl && (
+              <div className={styles.previewContainer}>
+                <div className={styles.imagePreview}>
+                  <Image
+                    src={formData.imageUrl}
+                    alt="Product preview"
+                    width={150}
+                    height={150}
+                    className={styles.previewImage}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="modelUrl" className={styles.label}>
+              3D Model (Filepath):
+            </label>
+            <input
+              id="modelUrl"
+              type="text"
+              name="modelUrl"
+              value={formData.modelUrl}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="/path/to/model.gltf"
+            />
+            {formData.modelUrl && (
+              <div className={styles.previewContainer}>
+                <div className={styles.modelPreview}>
+                  <ModelViewer modelUrl={formData.modelUrl} />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className={styles.footer}>
-          <Button
-            onClick={handleDeleteClick}
-            variant="destructive"
-            className={styles.deleteButton}
-          >
-            Delete
-          </Button>
+          {!formData.isNew && (
+            <Button
+              onClick={handleDeleteClick}
+              variant="destructive"
+              className={styles.deleteButton}
+            >
+              Delete
+            </Button>
+          )}
           <div className={styles.buttonGroup}>
             <Button
               onClick={onClose}
@@ -215,7 +257,7 @@ export default function ProductEditModal({
               onClick={handleConfirm}
               className={styles.confirmButton}
             >
-              Confirm Edit
+              {formData.isNew ? 'Add Product' : 'Confirm Edit'}
             </Button>
           </div>
         </div>
