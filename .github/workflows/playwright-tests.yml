@@ -20,7 +20,7 @@ jobs:
 
     env:
       DATABASE_URL: file:./packages/database/pc-store.db
-      BETTER_AUTH_SECRET: this-should-be-replaced-with-a-better-secret-key
+      BETTER_AUTH_SECRET: test-secret-for-testing-workflow
       BETTER_AUTH_URL: http://localhost:3000
 
     steps:
@@ -30,7 +30,6 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
           run_install: false
 
       - name: Setup Node.js
