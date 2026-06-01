@@ -42,7 +42,7 @@ export default function AdminPage() {
           <Profile
             firstName={user.firstName}
             lastName={user.lastName}
-            role="Administrator"
+            hideEditButton={true}
           />
 
           {/* manage products container */}

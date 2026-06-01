@@ -53,6 +53,12 @@
   gap: 0.75rem;
 }
 
+.filterButtonsGroup {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 .searchInput {
   display: none;
   align-items: center;

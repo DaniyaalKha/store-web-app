@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import styles from './SortModal.module.css';
 
-export type SortOption = 'none' | 'name-asc' | 'price-low' | 'price-high' | 'stock-low' | 'stock-high';
+export type SortOption = 'none' | 'name-asc' | 'price-low' | 'price-high' | 'stock-low' | 'stock-high' | 'brand-asc';
 
 interface SortModalProps {
   isOpen: boolean;
@@ -15,6 +15,7 @@ interface SortModalProps {
 const sortOptions: { value: SortOption; label: string }[] = [
   { value: 'none', label: 'Default' },
   { value: 'name-asc', label: 'A - Z (Alphabetically)' },
+  { value: 'brand-asc', label: 'Brand (A - Z)' },
   { value: 'price-low', label: 'Price: Low to High' },
   { value: 'price-high', label: 'Price: High to Low' },
   { value: 'stock-low', label: 'Stock: Low to High' },

@@ -23,6 +23,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const productIdValue = typeof productId === 'number' ? productId : Number.parseInt(productId, 10);
+
+    if (!Number.isInteger(productIdValue)) {
+      return NextResponse.json(
+        { error: 'Product not found' },
+        { status: 404 }
+      );
+    }
+
+    // Validate product exists
+    const product = await prisma.product.findUnique({
+      where: { id: productIdValue },
+    });
+
+    if (!product) {
+      return NextResponse.json(
+        { error: 'Product not found' },
+        { status: 404 }
+      );
+    }
+
     // Get or create cart
     let cart = await prisma.cart.findUnique({
       where: { user_id: session.user.id },
@@ -41,7 +62,7 @@ export async function POST(request: NextRequest) {
       where: {
         cart_id_product_id: {
           cart_id: cart.id,
-          product_id: productId,
+          product_id: productIdValue,
         },
       },
     });
@@ -52,7 +73,7 @@ export async function POST(request: NextRequest) {
         where: {
           cart_id_product_id: {
             cart_id: cart.id,
-            product_id: productId,
+            product_id: productIdValue,
           },
         },
         data: {
@@ -64,7 +85,7 @@ export async function POST(request: NextRequest) {
       await prisma.cartItem.create({
         data: {
           cart_id: cart.id,
-          product_id: productId,
+          product_id: productIdValue,
           quantity,
         },
       });

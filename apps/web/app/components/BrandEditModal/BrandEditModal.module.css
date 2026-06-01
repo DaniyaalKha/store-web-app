@@ -79,8 +79,7 @@
   color: hsl(var(--foreground));
 }
 
-.input,
-.select {
+.input {
   padding: 0.5rem 0.75rem;
   border: 1px solid hsl(var(--border));
   border-radius: 0.375rem;
@@ -91,18 +90,15 @@
   font-family: inherit;
 }
 
-.input::placeholder,
-.select option {
+.input::placeholder {
   color: hsl(var(--muted-foreground));
 }
 
-.input:hover,
-.select:hover {
+.input:hover {
   border-color: hsl(var(--muted-foreground));
 }
 
-.input:focus,
-.select:focus {
+.input:focus {
   outline: none;
   border-color: hsl(var(--primary));
   box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
@@ -112,8 +108,7 @@
   border-color: hsl(var(--destructive));
 }
 
-.inputError:focus,
-.select.inputError:focus {
+.inputError:focus {
   outline: none;
   border-color: hsl(var(--destructive));
   box-shadow: 0 0 0 2px hsl(var(--destructive) / 0.1);
@@ -124,113 +119,6 @@
   color: hsl(var(--destructive));
   margin-top: 0.25rem;
   margin-bottom: 0;
-}
-
-.select {
-  cursor: pointer;
-}
-
-.brandDropdownContainer {
-  position: relative;
-}
-
-.brandDropdownButton {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid hsl(var(--border));
-  border-radius: 0.375rem;
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-size: 0.875rem;
-  transition: all 150ms;
-  font-family: inherit;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  text-align: left;
-}
-
-.brandDropdownButton:hover {
-  border-color: hsl(var(--muted-foreground));
-}
-
-.brandDropdownButton:focus {
-  outline: none;
-  border-color: hsl(var(--primary));
-  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
-}
-
-.brandDropdownValue {
-  flex: 1;
-}
-
-.brandDropdownArrow {
-  font-size: 0.625rem;
-  color: hsl(var(--muted-foreground));
-  margin-left: 0.5rem;
-}
-
-.brandDropdownMenu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 0.25rem;
-  background-color: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  z-index: 10;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.brandDropdownItem {
-  width: 100%;
-  padding: 0.75rem;
-  border: none;
-  background: none;
-  color: hsl(var(--foreground));
-  font-size: 0.875rem;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: background-color 150ms;
-}
-
-.brandDropdownItem:hover {
-  background-color: hsl(var(--muted));
-}
-
-.brandDropdownItemActive {
-  background-color: hsl(var(--primary) / 0.1);
-  color: hsl(var(--primary));
-  font-weight: 600;
-}
-
-.brandOptionContent {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex: 1;
-}
-
-.brandLogo {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-}
-
-.brandName {
-  flex: 1;
-}
-
-.checkIcon {
-  color: hsl(var(--primary));
-  flex-shrink: 0;
 }
 
 .footer {
@@ -316,33 +204,6 @@
   min-width: 100px;
 }
 
-.textarea {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid hsl(var(--border));
-  border-radius: 0.375rem;
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-size: 0.875rem;
-  transition: all 150ms;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 80px;
-}
-
-.textarea::placeholder {
-  color: hsl(var(--muted-foreground));
-}
-
-.textarea:hover {
-  border-color: hsl(var(--muted-foreground));
-}
-
-.textarea:focus {
-  outline: none;
-  border-color: hsl(var(--primary));
-  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
-}
-
 .previewContainer {
   display: flex;
   justify-content: center;
@@ -352,10 +213,10 @@
   border-radius: 0.375rem;
 }
 
-.imagePreview {
+.logoPreview {
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   border-radius: 0.375rem;
   overflow: hidden;
   border: 1px solid hsl(var(--border));
@@ -364,15 +225,8 @@
 .previewImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-}
-
-.modelPreview {
-  width: 100%;
-  height: 250px;
-  border: 1px solid hsl(var(--border));
-  border-radius: 0.375rem;
-  overflow: hidden;
+  object-fit: contain;
+  background-color: white;
 }
 
 @media (max-width: 640px) {

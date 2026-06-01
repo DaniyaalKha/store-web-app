@@ -42,6 +42,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          setCartItems([]);
+          setCartCount(0);
+          return;
+        }
         throw new Error('Failed to fetch cart');
       }
 
