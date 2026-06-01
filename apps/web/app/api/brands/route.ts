@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@repo/database';
 import { auth } from '@/lib/auth';
 
+function sanitiseBrandName(name: string) {
+  return name.replace(/<[^>]*>/g, '').trim();
+}
+
 // GET all brands
 export async function GET() {
   try {
@@ -46,9 +50,10 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { name, logoUrl } = body;
+    const sanitisedName = typeof name === 'string' ? sanitiseBrandName(name) : '';
 
     // validate required fields
-    if (!name) {
+    if (!sanitisedName) {
       return NextResponse.json(
         { error: 'Brand name is required' },
         { status: 400 }
@@ -57,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     // check if brand already exists
     const existingBrand = await prisma.brand.findUnique({
-      where: { name },
+      where: { name: sanitisedName },
     });
 
     if (existingBrand) {
@@ -70,7 +75,7 @@ export async function POST(request: NextRequest) {
     // create brand
     const brand = await prisma.brand.create({
       data: {
-        name,
+        name: sanitisedName,
         logo_url: logoUrl || null,
       },
     });

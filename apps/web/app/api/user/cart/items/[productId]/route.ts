@@ -25,8 +25,9 @@ export async function PUT(
     const body = await request.json();
     const { quantity } = body;
     const { productId } = await params;
+    const productIdValue = Number.parseInt(productId, 10);
 
-    if (!productId || quantity === undefined || quantity < 1) {
+    if (!productId || !Number.isInteger(productIdValue) || quantity === undefined || quantity < 0) {
       return NextResponse.json(
         { error: 'Invalid product ID or quantity' },
         { status: 400 }
@@ -44,16 +45,24 @@ export async function PUT(
       );
     }
 
-    // update quantity
-    await prisma.cartItem.update({
-      where: {
-        cart_id_product_id: {
+    // If quantity is 0, delete the item
+    if (quantity === 0) {
+      await prisma.cartItem.deleteMany({
+        where: {
           cart_id: cart.id,
-          product_id: parseInt(productId),
+          product_id: productIdValue,
         },
-      },
-      data: { quantity },
-    });
+      });
+    } else {
+      // update quantity
+      await prisma.cartItem.updateMany({
+        where: {
+          cart_id: cart.id,
+          product_id: productIdValue,
+        },
+        data: { quantity },
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -80,6 +89,14 @@ export async function DELETE(
     }
 
     const { productId } = await params;
+    const productIdValue = Number.parseInt(productId, 10);
+
+    if (!productId || !Number.isInteger(productIdValue)) {
+      return NextResponse.json(
+        { error: 'Invalid product ID' },
+        { status: 400 }
+      );
+    }
 
     const cart = await prisma.cart.findUnique({
       where: { user_id: session.user.id },
@@ -93,12 +110,10 @@ export async function DELETE(
     }
 
     // Remove item
-    await prisma.cartItem.delete({
+    await prisma.cartItem.deleteMany({
       where: {
-        cart_id_product_id: {
-          cart_id: cart.id,
-          product_id: parseInt(productId),
-        },
+        cart_id: cart.id,
+        product_id: productIdValue,
       },
     });
 

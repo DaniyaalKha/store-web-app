@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma, CategoryName } from '@repo/database';
 import { auth } from '@/lib/auth';
 
+function sanitiseDescription(description: string) {
+  return description.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<[^>]*>/g, '');
+}
+
 // map UI categories to database CategoryName values
 const categoryMapping: Record<string, CategoryName> = {
   CPU: CategoryName.CPU,
@@ -57,6 +61,26 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const body = await request.json();
     const { brandName, productName, category, description, price, imageUrl, modelUrl, stockQuantity } = body;
 
+    if (price !== undefined) {
+      const parsedPrice = Number.parseFloat(price);
+      if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+        return NextResponse.json(
+          { error: 'Invalid price' },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (stockQuantity !== undefined) {
+      const parsedStockQuantity = Number.parseInt(stockQuantity, 10);
+      if (Number.isNaN(parsedStockQuantity) || parsedStockQuantity < 0) {
+        return NextResponse.json(
+          { error: 'Invalid stock quantity' },
+          { status: 400 }
+        );
+      }
+    }
+
     // get or create brand if provided
     let brandId = existingProduct.brand_id;
     if (brandName) {
@@ -103,11 +127,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         brand_id: brandId,
         category_id: categoryId,
         name: productName || existingProduct.name,
-        description: description !== undefined ? description : existingProduct.description,
-        price: price ? parseFloat(price) : existingProduct.price,
+        description: description !== undefined ? sanitiseDescription(description) : existingProduct.description,
+        price: price !== undefined ? Number.parseFloat(price) : existingProduct.price,
         image_url: imageUrl !== undefined ? imageUrl : existingProduct.image_url,
         model_3d_url: modelUrl !== undefined ? modelUrl : existingProduct.model_3d_url,
-        stock_quantity: stockQuantity !== undefined ? parseInt(stockQuantity) : existingProduct.stock_quantity,
+        stock_quantity: stockQuantity !== undefined ? Number.parseInt(stockQuantity, 10) : existingProduct.stock_quantity,
       },
       include: {
         brand: true,

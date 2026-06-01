@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma, CategoryName } from '@repo/database';
 import { auth } from '@/lib/auth';
 
+function sanitiseDescription(description: string) {
+  return description.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<[^>]*>/g, '');
+}
+
 // map UI categories to database CategoryName values
 const categoryMapping: Record<string, CategoryName> = {
   CPU: CategoryName.CPU,
@@ -66,6 +70,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const parsedPrice = Number.parseFloat(price);
+    if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+      return NextResponse.json(
+        { error: 'Invalid price' },
+        { status: 400 }
+      );
+    }
+
+    const parsedStockQuantity = stockQuantity === undefined ? 0 : Number.parseInt(stockQuantity, 10);
+    if (Number.isNaN(parsedStockQuantity) || parsedStockQuantity < 0) {
+      return NextResponse.json(
+        { error: 'Invalid stock quantity' },
+        { status: 400 }
+      );
+    }
+
     // get or create brand
     let brand = await prisma.brand.findUnique({
       where: { name: brandName },
@@ -107,11 +127,11 @@ export async function POST(request: NextRequest) {
         category_id: categoryRecord.id,
         name: productName,
         slug: slug + '-' + Date.now(), // ensure unique slug
-        description: description || null,
-        price: parseFloat(price),
+        description: description ? sanitiseDescription(description) : null,
+        price: parsedPrice,
         image_url: imageUrl || null,
         model_3d_url: modelUrl || null,
-        stock_quantity: parseInt(stockQuantity) || 0,
+        stock_quantity: parsedStockQuantity,
       },
       include: {
         brand: true,

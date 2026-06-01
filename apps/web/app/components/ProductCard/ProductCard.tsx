@@ -15,7 +15,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ slug, image, brand, title, price }: ProductCardProps) {
   return (
-    <Link href={`/product/${slug}`} className={styles.link}>
+    <Link href={`/product/${slug}`} className={styles.link} data-testid="product-card">
       <Card className={styles.card}>
         <div className={styles.imageContainer}>
           <Image

@@ -63,10 +63,15 @@ pnpm db:setup
 pnpm dev
 ```
 
-**Testing accounts** 
+**Testing** 
 All accounts have the password "Testing123".
 - user accounts: john@test.com jane@test.com 
-- admin accounts: admin@test.com
+- admin accounts: admin@test.com  
+
+To run Playwright tests, run this from the root:
+```bash
+pnpm test
+```
 
 **Deployment**  
 This application is deployed on Vercel available here: (to be added).
