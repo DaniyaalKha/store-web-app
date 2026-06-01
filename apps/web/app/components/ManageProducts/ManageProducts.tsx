@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import ManageProductRow from '../ManageProductRow';
 import ProductEditModal from '../ProductEditModal';
+import BrandEditModal from '../BrandEditModal/BrandEditModal';
 import ProductCategories from '../ProductCategories';
 import { SortOption } from '../SortModal/SortModal';
 import styles from './ManageProducts.module.css';
@@ -44,15 +45,25 @@ interface ProductEditData {
   isNew: boolean;
 }
 
+interface BrandEditData {
+  id: number;
+  name: string;
+  logoUrl: string;
+  isNew: boolean;
+}
+
 export default function ManageProducts() {
   const [allProducts, setAllProducts] = useState<DBProduct[]>([]);
   const [displayedProducts, setDisplayedProducts] = useState<DisplayProduct[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<ProductEditData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState<BrandEditData | null>(null);
+  const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [brandFilter, setBrandFilter] = useState('');
   const [sort, setSort] = useState<SortOption>('none');
 
   // fetch products from db
@@ -75,12 +86,17 @@ export default function ManageProducts() {
         setAllProducts(data);
 
         // convert to display format
-        const displayProducts = data.map((product) => ({
+        let displayProducts = data.map((product) => ({
           id: product.id,
           name: product.name,
           image: product.image_url || '/vercel.svg',
           brandName: product.brand.name,
         }));
+
+        // apply brand filter
+        if (brandFilter) {
+          displayProducts = displayProducts.filter((p) => p.brandName === brandFilter);
+        }
 
         // apply sorting
         const sortedProducts = applySorting(displayProducts, sort);
@@ -95,7 +111,7 @@ export default function ManageProducts() {
     }
 
     fetchProducts();
-  }, [search, selectedCategory, sort]);
+  }, [search, selectedCategory, brandFilter, sort]);
 
   const applySorting = (productsToSort: DisplayProduct[], sortOption: SortOption) => {
     const sorted = [...productsToSort];
@@ -103,6 +119,8 @@ export default function ManageProducts() {
     switch (sortOption) {
       case 'name-asc':
         return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case 'brand-asc':
+        return sorted.sort((a, b) => a.brandName.localeCompare(b.brandName));
       case 'price-low':
       case 'price-high':
       case 'stock-low':
@@ -211,7 +229,6 @@ export default function ManageProducts() {
       setSelectedProduct(null);
     } catch (err) {
       console.error('Error saving product:', err);
-      alert(err instanceof Error ? err.message : 'Failed to save product');
     }
   };
 
@@ -252,7 +269,6 @@ export default function ManageProducts() {
       setSelectedProduct(null);
     } catch (err) {
       console.error('Error deleting product:', err);
-      alert(err instanceof Error ? err.message : 'Failed to delete product');
     }
   };
 
@@ -269,8 +285,84 @@ export default function ManageProducts() {
     setSelectedCategory(category);
   };
 
+  const handleBrandFilterChange = (brand: string) => {
+    setBrandFilter(brand);
+  };
+
   const handleSortChange = (sortOption: SortOption) => {
     setSort(sortOption);
+  };
+
+  const handleAddBrand = () => {
+    const newBrand: BrandEditData = {
+      id: 0,
+      name: '',
+      logoUrl: '',
+      isNew: true,
+    };
+    setSelectedBrand(newBrand);
+    setIsBrandModalOpen(true);
+  };
+
+  const handleConfirmBrand = async (brand: BrandEditData) => {
+    try {
+      const payload = {
+        name: brand.name,
+        logoUrl: brand.logoUrl,
+      };
+
+      let response;
+      if (brand.isNew) {
+        response = await fetch('/api/brands', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        response = await fetch(`/api/brands/${brand.id}`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to save brand');
+      }
+
+      setIsBrandModalOpen(false);
+      setSelectedBrand(null);
+    } catch (err) {
+      console.error('Error saving brand:', err);
+    }
+  };
+
+  const handleDeleteBrand = async (brandId: number) => {
+    try {
+      const response = await fetch(`/api/brands/${brandId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete brand');
+      }
+
+      setIsBrandModalOpen(false);
+      setSelectedBrand(null);
+    } catch (err) {
+      console.error('Error deleting brand:', err);
+    }
+  };
+
+  const handleCloseBrandModal = () => {
+    setIsBrandModalOpen(false);
+    setSelectedBrand(null);
   };
 
   return (
@@ -278,20 +370,31 @@ export default function ManageProducts() {
       <section className={styles.container}>
         <div className={styles.headerContainer}>
           <h1 className={styles.heading}>Manage Products</h1>
-          <Button
-            onClick={handleAddProduct}
-            className={styles.addButton}
-          >
-            Add
-          </Button>
+          <div className={styles.buttonGroup}>
+            <Button
+              onClick={handleAddProduct}
+              className={styles.addButton}
+            >
+              Add Product
+            </Button>
+            <Button
+              onClick={handleAddBrand}
+              variant="outline"
+              className={styles.addBrandButton}
+            >
+              Add Brand
+            </Button>
+          </div>
         </div>
 
         <ProductCategories 
           fullWidth={true}
           onSearchChange={handleSearchChange}
           onCategoryChange={handleCategoryChange}
+          onBrandChange={handleBrandFilterChange}
           onSortChange={handleSortChange}
           activeCategory={selectedCategory}
+          activeBrand={brandFilter}
           activeSort={sort}
         />
 
@@ -317,6 +420,16 @@ export default function ManageProducts() {
           onConfirm={handleConfirmEdit}
           onDelete={handleDeleteProduct}
           onClose={handleCloseModal}
+        />
+      )}
+
+      {selectedBrand && (
+        <BrandEditModal
+          isOpen={isBrandModalOpen}
+          brand={selectedBrand}
+          onConfirm={handleConfirmBrand}
+          onDelete={handleDeleteBrand}
+          onClose={handleCloseBrandModal}
         />
       )}
     </>

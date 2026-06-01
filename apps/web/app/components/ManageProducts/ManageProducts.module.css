@@ -19,7 +19,18 @@
   color: hsl(var(--foreground));
 }
 
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
 .addButton {
+  height: auto;
+  padding: 0.5rem 1rem;
+}
+
+.addBrandButton {
   height: auto;
   padding: 0.5rem 1rem;
 }
@@ -45,7 +56,13 @@
     align-items: flex-start;
   }
 
-  .addButton {
+  .buttonGroup {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .addButton,
+  .addBrandButton {
     width: 100%;
   }
 }

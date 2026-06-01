@@ -3,8 +3,15 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Check } from 'lucide-react';
 import ModelViewer from '../ProductImage/ModelViewer';
 import styles from './ProductEditModal.module.css';
+
+interface Brand {
+  id: number;
+  name: string;
+  logo_url: string | null;
+}
 
 interface ProductEditData {
   id: number;
@@ -38,10 +45,35 @@ export default function ProductEditModal({
 }: ProductEditModalProps) {
   const [formData, setFormData] = useState<ProductEditData>(product);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [isBrandDropdownOpen, setIsBrandDropdownOpen] = useState(false);
+  const [brandsLoading, setBrandsLoading] = useState(true);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setFormData(product);
+    setErrors({});
   }, [product]);
+
+  // Fetch brands on mount
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        setBrandsLoading(true);
+        const response = await fetch('/api/brands');
+        if (!response.ok) throw new Error('Failed to fetch brands');
+        const data: Brand[] = await response.json();
+        setBrands(data);
+      } catch (err) {
+        console.error('Error fetching brands:', err);
+      } finally {
+        setBrandsLoading(false);
+      }
+    };
+    if (isOpen) {
+      fetchBrands();
+    }
+  }, [isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -51,9 +83,90 @@ export default function ProductEditModal({
       ...prev,
       [name]: value,
     }));
+    // clear error when user types
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // validate name
+    if (!formData.name.trim()) {
+      newErrors.name = 'Product name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Product name must be at least 2 characters';
+    } else if (formData.name.trim().length > 200) {
+      newErrors.name = 'Product name must not exceed 200 characters';
+    }
+
+    // Validate brand
+    if (!formData.brandName.trim()) {
+      newErrors.brandName = 'Brand selection is required';
+    }
+
+    // validate category
+    if (!formData.category.trim()) {
+      newErrors.category = 'Category selection is required';
+    }
+
+    // validate price
+    if (!formData.price.trim()) {
+      newErrors.price = 'Price is required';
+    } else if (isNaN(parseFloat(formData.price)) || parseFloat(formData.price) < 0) {
+      newErrors.price = 'Price must be a valid positive number';
+    }
+
+    // validate stock quantity
+    if (!formData.stockQuantity.trim()) {
+      newErrors.stockQuantity = 'Stock quantity is required';
+    } else if (isNaN(parseInt(formData.stockQuantity)) || parseInt(formData.stockQuantity) < 0) {
+      newErrors.stockQuantity = 'Stock quantity must be a valid non-negative number';
+    }
+
+    // validate image URL if provided
+    if (formData.imageUrl.trim()) {
+      if (!formData.imageUrl.startsWith('/') && !formData.imageUrl.startsWith('http')) {
+        newErrors.imageUrl = 'Image path must start with "/" or be a full URL';
+      }
+    }
+
+    // validate model URL if provided
+    if (formData.modelUrl.trim()) {
+      if (!formData.modelUrl.startsWith('/') && !formData.modelUrl.startsWith('http')) {
+        newErrors.modelUrl = '3D model path must start with "/" or be a full URL';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleBrandSelect = (brandName: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      brandName,
+    }));
+    setIsBrandDropdownOpen(false);
+    // clear brand error when selected
+    if (errors.brandName) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.brandName;
+        return newErrors;
+      });
+    }
   };
 
   const handleConfirm = () => {
+    if (!validateForm()) {
+      return;
+    }
     onConfirm(formData);
   };
 
@@ -99,24 +212,67 @@ export default function ProductEditModal({
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
               placeholder="Product name"
             />
+            {errors.name && <p className={styles.errorMessage}>{errors.name}</p>}
           </div>
 
           <div className={styles.formGroup}>
             <label htmlFor="brandName" className={styles.label}>
               Brand:
             </label>
-            <input
-              id="brandName"
-              type="text"
-              name="brandName"
-              value={formData.brandName}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="Brand name"
-            />
+            <div className={styles.brandDropdownContainer}>
+              <button
+                type="button"
+                className={styles.brandDropdownButton}
+                onClick={() => setIsBrandDropdownOpen(!isBrandDropdownOpen)}
+              >
+                <span className={styles.brandDropdownValue}>
+                  {formData.brandName || 'Select a brand'}
+                </span>
+                <span className={styles.brandDropdownArrow}>
+                  {isBrandDropdownOpen ? '▲' : '▼'}
+                </span>
+              </button>
+              {isBrandDropdownOpen && (
+                <div className={styles.brandDropdownMenu}>
+                  {brandsLoading ? (
+                    <div className={styles.brandDropdownItem}>Loading brands...</div>
+                  ) : brands.length === 0 ? (
+                    <div className={styles.brandDropdownItem}>No brands available</div>
+                  ) : (
+                    brands.map((brand) => (
+                      <button
+                        key={brand.id}
+                        type="button"
+                        className={`${styles.brandDropdownItem} ${
+                          formData.brandName === brand.name ? styles.brandDropdownItemActive : ''
+                        }`}
+                        onClick={() => handleBrandSelect(brand.name)}
+                      >
+                        <div className={styles.brandOptionContent}>
+                          {brand.logo_url && (
+                            <Image
+                              src={brand.logo_url}
+                              alt={brand.name}
+                              width={24}
+                              height={24}
+                              className={styles.brandLogo}
+                            />
+                          )}
+                          <span className={styles.brandName}>{brand.name}</span>
+                        </div>
+                        {formData.brandName === brand.name && (
+                          <Check className={styles.checkIcon} size={18} />
+                        )}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+            {errors.brandName && <p className={styles.errorMessage}>{errors.brandName}</p>}
           </div>
 
           <div className={styles.formGroup}>
@@ -128,7 +284,7 @@ export default function ProductEditModal({
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className={styles.select}
+              className={`${styles.select} ${errors.category ? styles.inputError : ''}`}
             >
               <option value="">Select a category</option>
               {categories.map((category) => (
@@ -137,6 +293,7 @@ export default function ProductEditModal({
                 </option>
               ))}
             </select>
+            {errors.category && <p className={styles.errorMessage}>{errors.category}</p>}
           </div>
 
           <div className={styles.formGroup}>
@@ -149,9 +306,10 @@ export default function ProductEditModal({
               name="price"
               value={formData.price}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${errors.price ? styles.inputError : ''}`}
               placeholder="0.00"
             />
+            {errors.price && <p className={styles.errorMessage}>{errors.price}</p>}
           </div>
 
           <div className={styles.formGroup}>
@@ -164,9 +322,10 @@ export default function ProductEditModal({
               name="stockQuantity"
               value={formData.stockQuantity}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${errors.stockQuantity ? styles.inputError : ''}`}
               placeholder="0"
             />
+            {errors.stockQuantity && <p className={styles.errorMessage}>{errors.stockQuantity}</p>}
           </div>
 
           <div className={styles.formGroup}>
@@ -194,10 +353,11 @@ export default function ProductEditModal({
               name="imageUrl"
               value={formData.imageUrl}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${errors.imageUrl ? styles.inputError : ''}`}
               placeholder="/path/to/image.jpg"
             />
-            {formData.imageUrl && (
+            {errors.imageUrl && <p className={styles.errorMessage}>{errors.imageUrl}</p>}
+            {formData.imageUrl && !errors.imageUrl && (
               <div className={styles.previewContainer}>
                 <div className={styles.imagePreview}>
                   <Image
@@ -222,10 +382,11 @@ export default function ProductEditModal({
               name="modelUrl"
               value={formData.modelUrl}
               onChange={handleChange}
-              className={styles.input}
+              className={`${styles.input} ${errors.modelUrl ? styles.inputError : ''}`}
               placeholder="/path/to/model.gltf"
             />
-            {formData.modelUrl && (
+            {errors.modelUrl && <p className={styles.errorMessage}>{errors.modelUrl}</p>}
+            {formData.modelUrl && !errors.modelUrl && (
               <div className={styles.previewContainer}>
                 <div className={styles.modelPreview}>
                   <ModelViewer modelUrl={formData.modelUrl} />

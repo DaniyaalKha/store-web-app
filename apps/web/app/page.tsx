@@ -10,6 +10,7 @@ import { SortOption } from './components/SortModal/SortModal';
 export default function Home() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
+  const [brand, setBrand] = useState('');
   const [sort, setSort] = useState<SortOption>('none');
 
   return (
@@ -32,8 +33,10 @@ export default function Home() {
       <ProductCategories 
         onSearchChange={setSearch}
         onCategoryChange={setCategory}
+        onBrandChange={setBrand}
         onSortChange={setSort}
         activeCategory={category}
+        activeBrand={brand}
         activeSort={sort}
       />
 
@@ -41,6 +44,7 @@ export default function Home() {
       <ProductGallery 
         search={search}
         category={category}
+        brand={brand}
         sort={sort}
       />
 

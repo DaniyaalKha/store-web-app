@@ -30,10 +30,11 @@ interface DisplayProduct {
 interface ProductGalleryProps {
   search?: string;
   category?: string;
+  brand?: string;
   sort?: SortOption;
 }
 
-export default function ProductGallery({ search = '', category = '', sort = 'none' }: ProductGalleryProps) {
+export default function ProductGallery({ search = '', category = '', brand = '', sort = 'none' }: ProductGalleryProps) {
   const [products, setProducts] = useState<DisplayProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +54,7 @@ export default function ProductGallery({ search = '', category = '', sort = 'non
         }
         const data: Product[] = await response.json();
         
-        const displayProducts = data.map((product) => ({
+        let displayProducts = data.map((product) => ({
           id: product.id,
           slug: product.slug,
           image: product.image_url || '/vercel.svg',
@@ -62,6 +63,11 @@ export default function ProductGallery({ search = '', category = '', sort = 'non
           price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
           stockQuantity: product.stock_quantity,
         }));
+
+        // Apply brand filter
+        if (brand) {
+          displayProducts = displayProducts.filter((p) => p.brand === brand);
+        }
         
         // Apply sorting
         const sortedProducts = applySorting(displayProducts, sort);
@@ -75,7 +81,7 @@ export default function ProductGallery({ search = '', category = '', sort = 'non
     }
 
     fetchProducts();
-  }, [search, category, sort]);
+  }, [search, category, brand, sort]);
 
   const applySorting = (productsToSort: DisplayProduct[], sortOption: SortOption) => {
     const sorted = [...productsToSort];
@@ -83,6 +89,8 @@ export default function ProductGallery({ search = '', category = '', sort = 'non
     switch (sortOption) {
       case 'name-asc':
         return sorted.sort((a, b) => a.title.localeCompare(b.title));
+      case 'brand-asc':
+        return sorted.sort((a, b) => a.brand.localeCompare(b.brand));
       case 'price-low':
         return sorted.sort((a, b) => a.price - b.price);
       case 'price-high':
