@@ -25,6 +25,7 @@ export default function ProductCard({ slug, image, brand, title, price }: Produc
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className={styles.image}
             loading="eager"
+            unoptimized={image.startsWith('http')}
           />
           <div className={styles.imageOverlay} />
         </div>

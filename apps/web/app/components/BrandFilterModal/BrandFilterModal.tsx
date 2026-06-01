@@ -107,6 +107,7 @@ export default function BrandFilterModal({
                         width={24}
                         height={24}
                         className={styles.brandLogo}
+                        unoptimized={brand.logo_url.startsWith('http')}
                       />
                     )}
                     <span className={styles.brandLabel}>{brand.name}</span>

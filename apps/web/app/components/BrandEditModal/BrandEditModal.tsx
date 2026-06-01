@@ -134,7 +134,7 @@ export default function BrandEditModal({
 
           <div className={styles.formGroup}>
             <label htmlFor="logoUrl" className={styles.label}>
-              Brand Logo (Filepath):
+              Brand Logo (Filepath or URL):
             </label>
             <input
               id="logoUrl"
@@ -143,7 +143,7 @@ export default function BrandEditModal({
               value={formData.logoUrl}
               onChange={handleChange}
               className={`${styles.input} ${errors.logoUrl ? styles.inputError : ''}`}
-              placeholder="/path/to/logo.png"
+              placeholder="/path/to/logo.png or https://example.com/logo.png"
             />
             {errors.logoUrl && <p className={styles.errorMessage}>{errors.logoUrl}</p>}
             {formData.logoUrl && !errors.logoUrl && (
@@ -155,6 +155,7 @@ export default function BrandEditModal({
                     width={100}
                     height={100}
                     className={styles.previewImage}
+                    unoptimized={formData.logoUrl.startsWith('http')}
                   />
                 </div>
               </div>

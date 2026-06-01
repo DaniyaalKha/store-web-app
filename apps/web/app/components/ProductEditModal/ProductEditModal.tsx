@@ -259,6 +259,7 @@ export default function ProductEditModal({
                               width={24}
                               height={24}
                               className={styles.brandLogo}
+                              unoptimized={brand.logo_url.startsWith('http')}
                             />
                           )}
                           <span className={styles.brandName}>{brand.name}</span>
@@ -345,7 +346,7 @@ export default function ProductEditModal({
 
           <div className={styles.formGroup}>
             <label htmlFor="imageUrl" className={styles.label}>
-              Image (Filepath):
+              Image (Filepath or URL):
             </label>
             <input
               id="imageUrl"
@@ -354,7 +355,7 @@ export default function ProductEditModal({
               value={formData.imageUrl}
               onChange={handleChange}
               className={`${styles.input} ${errors.imageUrl ? styles.inputError : ''}`}
-              placeholder="/path/to/image.jpg"
+              placeholder="/path/to/image.jpg or https://example.com/image.jpg"
             />
             {errors.imageUrl && <p className={styles.errorMessage}>{errors.imageUrl}</p>}
             {formData.imageUrl && !errors.imageUrl && (
@@ -366,6 +367,7 @@ export default function ProductEditModal({
                     width={150}
                     height={150}
                     className={styles.previewImage}
+                    unoptimized={formData.imageUrl.startsWith('http')}
                   />
                 </div>
               </div>
