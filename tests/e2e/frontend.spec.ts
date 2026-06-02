@@ -49,6 +49,32 @@ test.describe('Frontend - Pages & Components', () => {
     }
   });
 
+  test('guest product page hides add to cart and returns after login', async ({ page }) => {
+    const productPath = '/product/ryzen-7-7800x3d';
+
+    await page.goto(productPath);
+    await page.waitForLoadState('networkidle');
+
+    const addToCartButton = page.locator('button:has-text("Add to cart"), button:has-text("Add to Cart")');
+    await expect(addToCartButton).toHaveCount(0);
+
+    const buyNowButton = page.locator('button:has-text("Buy now")');
+    await expect(buyNowButton).toBeVisible();
+
+    await buyNowButton.click();
+    await page.waitForURL('**/login?returnTo=*');
+
+    expect(page.url()).toContain('/login');
+    expect(decodeURIComponent(new URL(page.url()).searchParams.get('returnTo') || '')).toBe(productPath);
+
+    await page.fill('input[type="email"]', TEST_USERS.customer1.email);
+    await page.fill('input[type="password"]', TEST_USERS.customer1.password);
+    await page.locator('form').getByRole('button', { name: 'Login' }).click();
+
+    await page.waitForURL(`**${productPath}`);
+    expect(page.url()).toContain(productPath);
+  });
+
   test('login page displays email and password inputs', async ({ page }) => {
     await page.goto('/login');
     
@@ -67,7 +93,7 @@ test.describe('Frontend - Pages & Components', () => {
     await page.fill('input[type="email"]', 'wrong@test.com');
     await page.fill('input[type="password"]', 'WrongPassword');
     
-    await page.click('button:has-text("Login")');
+      await page.locator('form').getByRole('button', { name: 'Login' }).click();
     await page.waitForTimeout(1000);
     
     // Should still be on login page
@@ -138,8 +164,7 @@ test.describe('Frontend - Pages & Components', () => {
     await page.goto('/admin');
     
     await page.waitForLoadState('networkidle');
-    
-    // Should be on admin page
+
     expect(page.url()).toContain('/admin');
   });
 

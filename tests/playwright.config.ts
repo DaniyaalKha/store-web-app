@@ -16,4 +16,5 @@ export default defineConfig({
   },
 
   globalSetup: require.resolve('./global-setup.ts'),
+  globalTeardown: require.resolve('./global-teardown.ts'),
 })

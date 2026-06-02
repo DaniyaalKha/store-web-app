@@ -14,7 +14,10 @@ export async function createProduct(
   }
 ) {
   const response = await page.request.post('/api/products/admin', {
-    data: {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify({
       productName: data.name,
       brandName: data.brandName,
       category: data.category,
@@ -23,7 +26,7 @@ export async function createProduct(
       description: data.description || 'Test product',
       imageUrl: data.imageUrl || '/store-branding/logo.png',
       modelUrl: data.modelUrl || '/test.glb',
-    },
+    }),
   });
   return response.json();
 }
@@ -34,10 +37,13 @@ export async function deleteProduct(page: Page, productId: string) {
 
 export async function createBrand(page: Page, name: string, logoUrl?: string) {
   const response = await page.request.post('/api/brands', {
-    data: {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify({
       name,
       logoUrl: logoUrl || '/store-branding/logo.png',
-    },
+    }),
   });
   return response.json();
 }
@@ -58,10 +64,13 @@ export async function getAllProducts(page: Page) {
 
 export async function addToCart(page: Page, productId: string, quantity: number = 1) {
   const response = await page.request.post('/api/user/cart/add', {
-    data: {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify({
       productId,
       quantity,
-    },
+    }),
   });
   return response;
 }
@@ -73,7 +82,10 @@ export async function getCart(page: Page) {
 
 export async function updateCartItem(page: Page, productId: string, quantity: number) {
   const response = await page.request.put(`/api/user/cart/items/${productId}`, {
-    data: { quantity },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify({ quantity }),
   });
   return response;
 }
@@ -84,14 +96,20 @@ export async function removeFromCart(page: Page, productId: string) {
 
 export async function checkout(page: Page) {
   const response = await page.request.post('/api/user/orders/checkout', {
-    data: {},
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify({}),
   });
   return response.json();
 }
 
 export async function buyNow(page: Page, productId: string, quantity: number = 1) {
   const response = await page.request.post('/api/user/orders/buy-now', {
-    data: { productId, quantity },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify({ productId, quantity }),
   });
   return response.json();
 }
@@ -110,7 +128,10 @@ export async function updateProfile(
   }
 ) {
   const response = await page.request.put('/api/user/profile', {
-    data,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify(data),
   });
   return response;
 }

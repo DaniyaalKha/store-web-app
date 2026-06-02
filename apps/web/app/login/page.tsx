@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { LoginForm } from '../components/LoginForm';
@@ -9,21 +9,21 @@ import { AuthCoverSection } from '../components/AuthCoverSection';
 import { AuthFormContainer } from '../components/AuthFormContainer';
 import { useAuth } from '@/lib/use-auth';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading, login } = useAuth();
   const [error, setError] = useState<string>('');
+  const returnTo = (() => {
+    const nextPath = searchParams.get('returnTo');
+    return nextPath && nextPath.startsWith('/') ? nextPath : null;
+  })();
 
   useEffect(() => {
     if (!loading && user) {
-      // redirect based on role
-      if (user.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/');
-      }
+      router.push(returnTo || (user.role === 'admin' ? '/admin' : '/'));
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, returnTo]);
 
   const handleLoginSubmit = async (email: string, password: string) => {
     try {
@@ -59,5 +59,19 @@ export default function LoginPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-screen bg-background text-foreground flex flex-col items-center justify-center">
+          <p>Loading...</p>
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   );
 }
