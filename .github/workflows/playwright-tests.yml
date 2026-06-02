@@ -44,6 +44,14 @@ jobs:
       - name: Prepare database
         run: pnpm db:setup
 
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          DATABASE_URL=file:./packages/database/pc-store.db
+          BETTER_AUTH_SECRET=test-secret-for-testing-workflow
+          BETTER_AUTH_URL=http://localhost:3000
+          EOF
+
       - name: Check TypeScript
         run: pnpm check-types
 
