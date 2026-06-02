@@ -14,6 +14,13 @@ const categoryMapping: Record<string, CategoryName> = {
   Accessories: CategoryName.mouse, // handled differently to combine keyboards, monitors, cables
 };
 
+const accessoryCategories: CategoryName[] = [
+  CategoryName.mouse,
+  CategoryName.cable,
+  CategoryName.keyboard,
+  CategoryName.monitor,
+];
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -31,14 +38,7 @@ export async function GET(request: NextRequest) {
     // Apply category filter
     if (category) {
       if (category === "Accessories") {
-        products = products.filter((p) =>
-          [
-            CategoryName.mouse,
-            CategoryName.cable,
-            CategoryName.keyboard,
-            CategoryName.monitor,
-          ].includes(p.category.name)
-        );
+        products = products.filter((p) => accessoryCategories.includes(p.category.name));
       } else {
         const dbCategory = categoryMapping[category];
         if (dbCategory) {

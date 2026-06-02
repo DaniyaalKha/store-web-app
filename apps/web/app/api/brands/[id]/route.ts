@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth';
 // PUT update brand
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // check admin authorisation
@@ -30,7 +30,8 @@ export async function PUT(
       );
     }
 
-    const brandId = parseInt(params.id);
+    const { id } = await params;
+    const brandId = parseInt(id);
     const body = await request.json();
     const { name, logoUrl } = body;
 
@@ -90,7 +91,7 @@ export async function PUT(
 // DELETE brand
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // check admin authorisation
@@ -115,7 +116,8 @@ export async function DELETE(
       );
     }
 
-    const brandId = parseInt(params.id);
+    const { id } = await params;
+    const brandId = parseInt(id);
 
     // check if brand exists
     const brand = await prisma.brand.findUnique({
