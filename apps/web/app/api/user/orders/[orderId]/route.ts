@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@repo/database';
+import { prisma, Prisma } from '@repo/database';
 import { auth } from '@/lib/auth';
+
+type OrderWithDetails = Prisma.OrderGetPayload<{
+  include: {
+    user: true;
+    products: {
+      include: {
+        product: {
+          include: {
+            brand: true;
+          };
+        };
+      };
+    };
+  };
+}>;
 
 export async function GET(
   request: NextRequest,
@@ -27,7 +42,7 @@ export async function GET(
     }
 
     // get order details
-    const order = await prisma.order.findUnique({
+    const order: OrderWithDetails | null = await prisma.order.findUnique({
       where: { id: orderIdNum },
       include: {
         user: true,
@@ -59,7 +74,7 @@ export async function GET(
     }
 
     // format response
-    const formattedProducts = order.products.map((op) => ({
+    const formattedProducts = order.products.map((op: Prisma.OrderProductGetPayload<{ include: { product: { include: { brand: true } } } }>) => ({
       id: op.product.id,
       name: op.product.name,
       quantity: op.quantity,
@@ -70,7 +85,7 @@ export async function GET(
     }));
 
     const total = formattedProducts
-      .reduce((sum, p) => sum + p.price * p.quantity, 0)
+      .reduce((sum: number, p: typeof formattedProducts[0]) => sum + p.price * p.quantity, 0)
       .toFixed(2);
 
     const orderNumber = `ORD-${String(order.id).padStart(5, '0')}`;

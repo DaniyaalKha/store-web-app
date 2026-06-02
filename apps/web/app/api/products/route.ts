@@ -42,11 +42,11 @@ export async function GET(request: NextRequest) {
     // Apply category filter
     if (category) {
       if (category === "Accessories") {
-        products = products.filter((p) => accessoryCategories.includes(p.category.name));
+        products = products.filter((p: ProductWithRelations) => accessoryCategories.includes(p.category.name));
       } else {
         const dbCategory = categoryMapping[category];
         if (dbCategory) {
-          products = products.filter((p) => p.category.name === dbCategory);
+          products = products.filter((p: ProductWithRelations) => p.category.name === dbCategory);
         }
       }
     }
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     // apply search filter
     if (search) {
       const searchLower = search.toLowerCase();
-      products = products.filter((p) =>
+      products = products.filter((p: ProductWithRelations) =>
         p.name.toLowerCase().includes(searchLower) ||
         (p.description && p.description.toLowerCase().includes(searchLower)) ||
         p.brand.name.toLowerCase().includes(searchLower)

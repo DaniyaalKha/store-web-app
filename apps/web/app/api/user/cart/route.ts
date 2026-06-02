@@ -52,10 +52,18 @@ export async function GET(request: NextRequest) {
     }
 
     // format response
-    const items = cart.items as any[];
-    const cartItems: any[] = [];
-    for (let i = 0; i < items.length; i++) {
-      const item: any = items[i];
+    const items = cart.items;
+    const cartItems: Array<{
+      id: number;
+      slug: string;
+      productName: string;
+      brandName: string;
+      image: string;
+      quantity: number;
+      pricePerUnit: number;
+      cost: string;
+    }> = [];
+    for (const item of items) {
       const pricePerUnit = typeof item.product.price === 'string'
         ? parseFloat(item.product.price)
         : item.product.price.toNumber();
