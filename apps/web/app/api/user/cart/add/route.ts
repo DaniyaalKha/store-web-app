@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@repo/database';
 import { auth } from '@/lib/auth';
+import { ensureUserRecord } from '@/lib/ensure-user';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,6 +13,8 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    await ensureUserRecord(session.user);
 
     const body = await request.json();
     const { productId, quantity = 1 } = body;

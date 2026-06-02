@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ProductImage from '../../components/ProductImage';
@@ -9,6 +9,7 @@ import ProductInfo from '../../components/ProductInfo';
 import ProductActions from '../../components/ProductActions';
 import Toast from '../../components/Toast/Toast';
 import { useCart } from '@/lib/cart-context';
+import { useAuth } from '@/lib/use-auth';
 
 interface Product {
   id: number;
@@ -33,13 +34,17 @@ interface PageProps {
 
 export default function ProductViewPage({ params }: PageProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { slug } = use(params);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const { addToCart } = useCart();
+  const { user, loading: authLoading } = useAuth();
+  const canAddToCart = !authLoading && user?.role === 'customer';
 
   useEffect(() => {
     async function fetchProduct() {
@@ -83,7 +88,17 @@ export default function ProductViewPage({ params }: PageProps) {
 
   const handleBuyNow = async () => {
     if (!product) return;
+    if (authLoading) {
+      return;
+    }
+
+    if (!user || user.role !== 'customer') {
+      router.push(`/login?returnTo=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
     try {
+      setPurchaseError(null);
       setIsAddingToCart(true);
       const response = await fetch('/api/user/orders/buy-now', {
         method: 'POST',
@@ -93,13 +108,16 @@ export default function ProductViewPage({ params }: PageProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create order');
+        const errorBody = await response.json().catch(() => null);
+        setPurchaseError(errorBody?.error ?? 'Failed to create order');
+        return;
       }
 
       const data = await response.json();
       router.push(`/order-confirmation?orderId=${data.orderId}`);
     } catch (err) {
       console.error('Error creating order:', err);
+      setPurchaseError(err instanceof Error ? err.message : 'Failed to create order');
     } finally {
       setIsAddingToCart(false);
     }
@@ -160,11 +178,14 @@ export default function ProductViewPage({ params }: PageProps) {
                 onClose={() => setSuccessMessage(false)}
               />
             )}
+            {purchaseError && (
+              <p className="mt-3 text-sm text-red-500">{purchaseError}</p>
+            )}
             <div className="mt-6">
               <ProductActions
-                onAddToCart={handleAddToCart}
+                onAddToCart={canAddToCart ? handleAddToCart : undefined}
                 onBuyNow={handleBuyNow}
-                isLoading={isAddingToCart}
+                isLoading={isAddingToCart || authLoading}
               />
             </div>
           </div>

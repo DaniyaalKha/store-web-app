@@ -16,14 +16,15 @@ export default function ProductActions({
 }: ProductActionsProps) {
   return (
     <div className={styles.container}>
-      {/* Add to Cart button */}
-      <Button
-        className={styles.addToCart}
-        onClick={onAddToCart}
-        disabled={isLoading}
-      >
-        {isLoading ? 'Adding...' : 'Add to cart'}
-      </Button>
+      {onAddToCart && (
+        <Button
+          className={styles.addToCart}
+          onClick={onAddToCart}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Adding...' : 'Add to cart'}
+        </Button>
+      )}
 
       {/* Buy Now button */}
       <Button

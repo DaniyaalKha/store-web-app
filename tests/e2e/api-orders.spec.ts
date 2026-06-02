@@ -186,7 +186,7 @@ test.describe('Orders & Checkout', () => {
     
     const response = await page.request.post('/api/user/orders/buy-now', {
       data: {
-        productId: products[0].id,
+        productId: String(products[0].id),
         quantity: 1,
       },
     });

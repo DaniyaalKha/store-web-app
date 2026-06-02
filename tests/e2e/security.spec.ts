@@ -170,7 +170,7 @@ test.describe('Security & Attack Prevention', () => {
     await page.goto('/login');
     await page.fill('input[type="email"]', newEmail);
     await page.fill('input[type="password"]', 'TestPassword123');
-    await page.click('button:has-text("Login")');
+    await page.locator('form').getByRole('button', { name: 'Login' }).click();
     
     await page.waitForLoadState('networkidle');
     

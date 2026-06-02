@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@repo/database';
 import { auth } from '@/lib/auth';
+import { ensureUserRecord } from '@/lib/ensure-user';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,6 +13,8 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    await ensureUserRecord(session.user);
 
     // get or create cart
     let cart = await prisma.cart.findUnique({

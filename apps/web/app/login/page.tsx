@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { LoginForm } from '../components/LoginForm';
@@ -11,19 +11,19 @@ import { useAuth } from '@/lib/use-auth';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading, login } = useAuth();
   const [error, setError] = useState<string>('');
+  const returnTo = (() => {
+    const nextPath = searchParams.get('returnTo');
+    return nextPath && nextPath.startsWith('/') ? nextPath : null;
+  })();
 
   useEffect(() => {
     if (!loading && user) {
-      // redirect based on role
-      if (user.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/');
-      }
+      router.push(returnTo || (user.role === 'admin' ? '/admin' : '/'));
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, returnTo]);
 
   const handleLoginSubmit = async (email: string, password: string) => {
     try {

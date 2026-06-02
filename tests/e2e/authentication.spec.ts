@@ -83,7 +83,7 @@ test.describe('Authentication & Sessions', () => {
     await page.fill('input[type="email"]', 'nonexistent@test.com');
     await page.fill('input[type="password"]', 'TestPassword123');
     
-    await page.click('button:has-text("Login")');
+    await page.locator('form').getByRole('button', { name: 'Login' }).click();
     
     // Should show error and stay on page
     await page.waitForTimeout(1000);
@@ -95,7 +95,7 @@ test.describe('Authentication & Sessions', () => {
     await page.fill('input[type="email"]', TEST_USERS.customer1.email);
     await page.fill('input[type="password"]', 'WrongPassword123');
     
-    await page.click('button:has-text("Login")');
+    await page.locator('form').getByRole('button', { name: 'Login' }).click();
     
     await page.waitForTimeout(1000);
     expect(page.url()).toContain('/login');
