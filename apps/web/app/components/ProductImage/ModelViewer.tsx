@@ -65,14 +65,31 @@ interface ModelViewerProps {
   modelUrl?: string;
 }
 
+function useCanvasBackgroundColor() {
+  const [bgColor, setBgColor] = useState<string>('rgb(9, 9, 9)');
+
+  useEffect(() => {
+    // Get the computed CSS variable value
+    const root = document.documentElement;
+    const color = getComputedStyle(root).getPropertyValue('--canvas-bg').trim();
+    if (color) {
+      setBgColor(color);
+    }
+  }, []);
+
+  return bgColor;
+}
+
 export default function ModelViewer({ modelUrl = '/products/models/RTX_3080.glb' }: ModelViewerProps) {
+  const bgColor = useCanvasBackgroundColor();
+
   return (
     <Canvas
       camera={{ position: [0, 0, 2.5], fov: 45 }}
       style={{
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgb(9, 9, 9)',
+        backgroundColor: bgColor,
       }}
     >
       <Suspense fallback={null}>
