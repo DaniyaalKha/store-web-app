@@ -3,17 +3,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import { ShoppingCart, LogOut } from 'lucide-react';
+import { ShoppingCart, LogOut, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import styles from './Header.module.css';
 import { useAuth } from '@/lib/use-auth';
 import { useCart } from '@/lib/cart-context';
+import { useTheme } from '@/lib/use-theme';
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { totalQuantity } = useCart();
+  const { theme, toggleTheme } = useTheme();
 
   const isActive = (href: string) => {
     // check which page matches for border (/ for homepage or href for others)
@@ -103,6 +105,17 @@ export default function Header() {
               </Link>
             </>
           )}
+
+          {/* Theme toggle - for all users */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className={styles.themeButton}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </Button>
 
           {/* Authentication section */}
           {user ? (

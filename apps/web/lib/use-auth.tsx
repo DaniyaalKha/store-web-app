@@ -61,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           city: baUser.city,
           state: baUser.state,
           country: baUser.country,
+          preferredMode: baUser.preferredMode || 'dark',
         };
         setUser(appUser);
         return appUser;
@@ -107,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         city: baUser.city,
         state: baUser.state,
         country: baUser.country,
+        preferredMode: baUser.preferredMode || 'dark',
       };
       setUser(appUser);
       return appUser;
@@ -159,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         city: baUser.city,
         state: baUser.state,
         country: baUser.country,
+        preferredMode: baUser.preferredMode || 'dark',
       };
       setUser(appUser);
       return appUser;

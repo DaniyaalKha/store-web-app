@@ -51,6 +51,7 @@ model User {
   city          String?
   state         String?
   country       String?
+  preferredMode String?  @default("dark") @map("preferred_mode")
 
   accounts      Account[]
   sessions      Session[]

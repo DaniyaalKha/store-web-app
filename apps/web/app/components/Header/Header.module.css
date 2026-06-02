@@ -104,3 +104,13 @@
   min-width: 18px;
   text-align: center;
 }
+
+.themeButton {
+  color: hsl(var(--foreground));
+  transition: all 150ms;
+}
+
+.themeButton:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}

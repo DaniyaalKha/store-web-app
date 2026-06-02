@@ -69,11 +69,10 @@ function useCanvasBackgroundColor() {
   const [bgColor, setBgColor] = useState<string>('rgb(9, 9, 9)');
 
   useEffect(() => {
-    // Get the computed CSS variable value
     const root = document.documentElement;
-    const color = getComputedStyle(root).getPropertyValue('--canvas-bg').trim();
+    const color = getComputedStyle(root).getPropertyValue('--background').trim();
     if (color) {
-      setBgColor(color);
+      setBgColor(`hsl(${color})`);
     }
   }, []);
 
