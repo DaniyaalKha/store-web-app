@@ -52,22 +52,25 @@ export async function GET(request: NextRequest) {
     }
 
     // format response
-    const cartItems = cart.items.map((item) => ({
-      id: item.product.id,
-      slug: item.product.slug,
-      productName: item.product.name,
-      brandName: item.product.brand.name,
-      image: item.product.image_url || '/store-branding/logo.png',
-      quantity: item.quantity,
-      pricePerUnit: typeof item.product.price === 'string'
+    const items = cart.items as any[];
+    const cartItems: any[] = [];
+    for (let i = 0; i < items.length; i++) {
+      const item: any = items[i];
+      const pricePerUnit = typeof item.product.price === 'string'
         ? parseFloat(item.product.price)
-        : item.product.price.toNumber(),
-      cost: (
-        (typeof item.product.price === 'string'
-          ? parseFloat(item.product.price)
-          : item.product.price.toNumber()) * item.quantity
-      ).toFixed(2),
-    }));
+        : item.product.price.toNumber();
+
+      cartItems.push({
+        id: item.product.id,
+        slug: item.product.slug,
+        productName: item.product.name,
+        brandName: item.product.brand.name,
+        image: item.product.image_url || '/store-branding/logo.png',
+        quantity: item.quantity,
+        pricePerUnit,
+        cost: (pricePerUnit * item.quantity).toFixed(2),
+      });
+    }
 
     return NextResponse.json({
       cartItems,

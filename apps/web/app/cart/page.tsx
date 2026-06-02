@@ -82,12 +82,12 @@ export default function CartPage() {
 
   const calculateTotal = () => {
     return cartItems
-      .reduce((sum, item) => sum + parseFloat(item.cost), 0)
+      .reduce((sum: number, item: CartItemType) => sum + parseFloat(item.cost), 0)
       .toFixed(2);
   };
 
   const total = calculateTotal();
-  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = cartItems.reduce((sum: number, item: CartItemType) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -107,7 +107,7 @@ export default function CartPage() {
           {cartItems.length > 0 ? (
             <>
               <div className={styles.itemsContainer}>
-                {cartItems.map((item) => (
+                {cartItems.map((item: CartItemType) => (
                   <CartItem
                     key={item.id}
                     id={item.id}

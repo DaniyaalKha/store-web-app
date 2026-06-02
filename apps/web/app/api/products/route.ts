@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma, CategoryName } from "@repo/database";
+import type { Product } from "@repo/database";
 
 // map UI categories to database CategoryName values
 const categoryMapping: Record<string, CategoryName> = {
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category") || "";
 
     // Fetch all products with relations
-    let products = await prisma.product.findMany({
+    let products: Product[] = await prisma.product.findMany({
       include: {
         brand: true,
         category: true,
