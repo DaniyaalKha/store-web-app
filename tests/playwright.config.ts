@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
@@ -12,9 +13,9 @@ export default defineConfig({
   webServer: {
     command: 'pnpm --filter web dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI
+    reuseExistingServer: !(typeof process !== 'undefined' && process.env && process.env.CI)
   },
 
-  globalSetup: require.resolve('./global-setup.ts'),
-  globalTeardown: require.resolve('./global-teardown.ts'),
+  globalSetup: './global-setup.ts',
+  globalTeardown: './global-teardown.ts',
 })

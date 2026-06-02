@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { spawn } from 'child_process';
 
 async function globalTeardown() {
@@ -10,7 +11,7 @@ async function globalTeardown() {
       cwd: process.cwd(),
     });
 
-    seed.on('close', (code) => {
+    seed.on('close', (code: number | null) => {
       if (code === 0) {
         console.log('Database successfully reset after testing');
         resolve(undefined);
@@ -20,9 +21,9 @@ async function globalTeardown() {
       }
     });
 
-    seed.on('error', (err) => {
+    seed.on('error', (err: unknown) => {
       console.error('Database reset failed:', err);
-      reject(err);
+      reject(err as Error);
     });
   });
 }

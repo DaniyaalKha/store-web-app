@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma, CategoryName } from "@repo/database";
+import { prisma, CategoryName, Prisma } from "@repo/database";
 
 // map UI categories to database CategoryName values
 const categoryMapping: Record<string, CategoryName> = {
@@ -21,6 +21,10 @@ const accessoryCategories: CategoryName[] = [
   CategoryName.monitor,
 ];
 
+type ProductWithRelations = Prisma.ProductGetPayload<{
+  include: { brand: true; category: true };
+}>;
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -28,7 +32,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category") || "";
 
     // Fetch all products with relations
-    let products = await prisma.product.findMany({
+    let products: ProductWithRelations[] = await prisma.product.findMany({
       include: {
         brand: true,
         category: true,
