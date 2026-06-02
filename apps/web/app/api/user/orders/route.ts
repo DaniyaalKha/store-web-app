@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@repo/database';
+import { prisma, Prisma } from '@repo/database';
 import { auth } from '@/lib/auth';
+
+type OrderWithProducts = Prisma.OrderGetPayload<{
+  include: {
+    products: {
+      include: {
+        product: true;
+      };
+    };
+  };
+}>;
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,7 +25,7 @@ export async function GET(request: NextRequest) {
     }
 
     // get all orders for the user with their products
-    const orders = await prisma.order.findMany({
+    const orders: OrderWithProducts[] = await prisma.order.findMany({
       where: { user_id: session.user.id },
       include: {
         products: {
@@ -28,7 +38,7 @@ export async function GET(request: NextRequest) {
     });
 
     // format the response
-    const formattedOrders = orders.map((order) => ({
+    const formattedOrders = orders.map((order: OrderWithProducts) => ({
       id: order.id,
       orderNumber: `ORD-${String(order.id).padStart(3, '0')}`,
       date: order.order_time.toLocaleDateString('en-US', {
@@ -38,14 +48,14 @@ export async function GET(request: NextRequest) {
       }),
       status: order.status,
       total: order.products
-        .reduce((sum, op) => {
+        .reduce((sum: number, op: OrderWithProducts['products'][0]) => {
           const price = typeof op.product.price === 'string'
             ? parseFloat(op.product.price)
             : op.product.price.toNumber();
           return sum + price * op.quantity;
         }, 0)
         .toFixed(2),
-      products: order.products.map((op) => ({
+      products: order.products.map((op: OrderWithProducts['products'][0]) => ({
         id: op.product.id,
         name: op.product.name,
         quantity: op.quantity,
