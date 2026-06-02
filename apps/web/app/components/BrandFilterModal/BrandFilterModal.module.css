@@ -133,6 +133,10 @@
   object-fit: contain;
 }
 
+html:not(.dark) .brandLogo {
+  filter: invert(1);
+}
+
 .brandLabel {
   color: hsl(var(--foreground));
   font-size: 0.95rem;

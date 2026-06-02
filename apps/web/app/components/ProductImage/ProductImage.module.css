@@ -21,6 +21,10 @@
   object-fit: contain;
 }
 
+html:not(.dark) .image {
+  filter: invert(1);
+}
+
 @media (max-width: 768px) {
   .container {
     width: 100%;

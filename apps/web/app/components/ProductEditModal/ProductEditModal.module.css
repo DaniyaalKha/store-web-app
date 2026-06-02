@@ -224,6 +224,10 @@
   object-fit: contain;
 }
 
+html:not(.dark) .brandLogo {
+  filter: invert(1);
+}
+
 .brandName {
   flex: 1;
 }

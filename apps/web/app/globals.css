@@ -84,3 +84,11 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* Invert white logos in light mode */
+:not(.dark) img[alt*="logo"],
+:not(.dark) img[alt*="branding"],
+:not(.dark) img[src*="brands/"],
+:not(.dark) img[src*="store-branding/"] {
+  filter: invert(1);
+}

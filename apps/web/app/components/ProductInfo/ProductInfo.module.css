@@ -27,6 +27,10 @@
   object-fit: contain;
 }
 
+html:not(.dark) .logo img {
+  filter: invert(1);
+}
+
 .brandName {
   font-size: 0.875rem;
   color: hsl(var(--muted-foreground));
