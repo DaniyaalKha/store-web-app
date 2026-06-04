@@ -5,7 +5,7 @@ import { hashPassword, verifyPassword } from "./hashing";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "sqlite",
+    provider: "postgresql",
   }),
   secret: process.env.BETTER_AUTH_SECRET,
   basePath: "/api/auth",
