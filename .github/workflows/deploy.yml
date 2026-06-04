@@ -46,6 +46,9 @@ jobs:
       - name: Prepare database
         run: pnpm db:setup
 
+      - name: Pull Vercel Project Settings
+        run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Build Project Artifacts
         run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
