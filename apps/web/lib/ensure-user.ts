@@ -15,7 +15,7 @@ type SessionUser = {
 
 export async function ensureUserRecord(sessionUser: SessionUser) {
   return prisma.user.upsert({
-    where: { id: sessionUser.id },
+    where: { email: sessionUser.email },
     update: {},
     create: {
       id: sessionUser.id,

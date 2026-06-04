@@ -13,7 +13,9 @@ export default defineConfig({
   webServer: {
     command: 'pnpm --filter web dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: !(typeof process !== 'undefined' && process.env && process.env.CI)
+    reuseExistingServer: !(typeof process !== 'undefined' && process.env && process.env.CI),
+    stdout: 'ignore',
+    stderr: 'ignore',
   },
 
   globalSetup: './global-setup.ts',
