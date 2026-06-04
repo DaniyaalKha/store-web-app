@@ -28,6 +28,7 @@
     --success: 142 76.2% 36.3%;
     --success-foreground: 0 0% 98%;
     --image-bg: 210 16.7% 82.4%;
+    --logo-filter: invert(1);
   }
 
   .dark {
@@ -55,6 +56,7 @@
     --success: 142 71.8% 29.2%;
     --success-foreground: 0 0% 98%;
     --image-bg: 217 32.6% 17.5%;
+    --logo-filter: invert(0);
   }
 }
 
@@ -85,10 +87,10 @@ a {
   text-decoration: none;
 }
 
-/* Invert white logos in light mode */
-:not(.dark) img[alt*="logo"],
-:not(.dark) img[alt*="branding"],
-:not(.dark) img[src*="brands/"],
-:not(.dark) img[src*="store-branding/"] {
-  filter: invert(1);
+/* recolour logos black for light mode */
+img[alt*="logo"],
+img[alt*="branding"],
+img[src*="brands/"],
+img[src*="store-branding/"] {
+  filter: var(--logo-filter);
 }

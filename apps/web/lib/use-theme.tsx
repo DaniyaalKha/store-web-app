@@ -18,11 +18,21 @@ export function useTheme() {
     const initializeTheme = async () => {
       let preferredTheme: ThemeMode = 'dark'; // default
 
-      if (user?.preferredMode) {
-        // if authenticated: get preference from database
+      // 1: read from cookie 
+      const cookies = document.cookie.split('; ');
+      const themeCookie = cookies.find(c => c.startsWith('theme-mode='));
+      if (themeCookie) {
+        const cookieValue = themeCookie.split('=')[1] as ThemeMode;
+        if (cookieValue === 'light' || cookieValue === 'dark') {
+          preferredTheme = cookieValue;
+        }
+      }
+      // 2: read from database (authenticated user)
+      else if (user?.preferredMode) {
         preferredTheme = (user.preferredMode as ThemeMode) || 'dark';
-      } else {
-        // if not authenticated: check localStorage
+      }
+      // 3: read from localStorage (non-authenticated user)
+      else {
         const stored = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
         if (stored === 'light' || stored === 'dark') {
           preferredTheme = stored;
@@ -50,6 +60,9 @@ export function useTheme() {
     const newTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
     applyTheme(newTheme);
+
+    // save to cookie for server-side SSR
+    document.cookie = `theme-mode=${newTheme}; path=/; max-age=${60 * 60 * 24 * 365}`; // 1 year
 
     // save to localStorage as backup
     localStorage.setItem(STORAGE_KEY, newTheme);

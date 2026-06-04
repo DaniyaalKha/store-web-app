@@ -13,23 +13,35 @@
 }
 
 .addToCart {
-  background-color: hsl(var(--card));
-  color: hsl(var(--foreground));
-  border: 2px solid hsl(var(--border));
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
 }
 
 .addToCart:hover {
-  background-color: hsl(var(--muted));
+  background-color: hsl(var(--primary) / 0.9);
 }
 
 .buyNow {
-  background-color: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  border: 2px solid hsl(var(--primary));
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+  border: 1px solid hsl(var(--secondary-foreground));
 }
 
 .buyNow:hover {
-  background-color: hsl(var(--primary) / 0.9);
+  background-color: hsl(var(--secondary) / 0.9);
+}
+
+@media (prefers-color-scheme: dark) {
+  .buyNow {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--foreground));
+  }
+
+  .buyNow:hover {
+    background-color: hsl(var(--background) / 0.8);
+  }
 }
 
 @media (max-width: 768px) {

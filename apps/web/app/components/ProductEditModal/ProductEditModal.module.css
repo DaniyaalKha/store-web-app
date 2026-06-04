@@ -222,10 +222,7 @@
   width: 24px;
   height: 24px;
   object-fit: contain;
-}
-
-html:not(.dark) .brandLogo {
-  filter: invert(1);
+  filter: var(--logo-filter);
 }
 
 .brandName {

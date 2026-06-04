@@ -28,7 +28,6 @@ export default function ProductActions({
 
       {/* Buy Now button */}
       <Button
-        variant="outline"
         className={styles.buyNow}
         onClick={onBuyNow}
         disabled={isLoading}

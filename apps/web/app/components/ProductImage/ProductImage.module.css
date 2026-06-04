@@ -19,10 +19,7 @@
 
 .image {
   object-fit: contain;
-}
-
-html:not(.dark) .image {
-  filter: invert(1);
+  filter: var(--logo-filter);
 }
 
 @media (max-width: 768px) {
