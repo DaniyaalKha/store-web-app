@@ -90,7 +90,7 @@ This application is deployed on Vercel available here: https://store-web-app-umb
 - Additional tests
 - Rate limiting
 - File upload for admins (for product and brand images and product 3D models)
-- Removal placeholder assets from public folder
+- Remove placeholder assets from public folder
 
 ## Assignment Context
 This project was developed as part of a university assignment for COMP3036 at Western Sydney University to demonstrate:
@@ -105,3 +105,4 @@ This project was developed as part of a university assignment for COMP3036 at We
 - [Arham Abdullah on SketchFab for RTX 3080TI graphics card model](https://sketchfab.com/3d-models/rtx-3080ti-graphics-card-3d-model-7c90da836c4a43ee99afbe0c0f39cf12)  
 - [PolyDavid on SketchFab for AMD Ryzen 5 9600x CPU model](https://sketchfab.com/3d-models/amd-9600x-cpu-low-poly-b433826fb4b1432dbc18a90b89dede71) 
 - [Spark Games on SketchFab for RAM model](https://sketchfab.com/3d-models/old-computer-ram-9d3016df1c44484096c589b75a53936e)
+- Product images from relevant brands and retailers.
