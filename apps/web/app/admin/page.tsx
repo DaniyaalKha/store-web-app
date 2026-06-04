@@ -1,17 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Profile from '../components/Profile';
 import ManageProducts from '../components/ManageProducts';
+import ManageOrders from '../components/ManageOrders';
 import styles from '../profile/profile.module.css';
+import adminStyles from './admin.module.css';
 import { useAuth } from '@/lib/use-auth';
 
 export default function AdminPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [activeTab, setActiveTab] = useState<'products' | 'orders'>('products');
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) {
@@ -45,8 +48,25 @@ export default function AdminPage() {
             hideEditButton={true}
           />
 
-          {/* manage products container */}
-          <ManageProducts />
+          {/* tab buttons */}
+          <div className={adminStyles.tabContainer}>
+            <button
+              className={`${adminStyles.tabButton} ${activeTab === 'products' ? adminStyles.activeTab : ''}`}
+              onClick={() => setActiveTab('products')}
+            >
+              Products
+            </button>
+            <button
+              className={`${adminStyles.tabButton} ${activeTab === 'orders' ? adminStyles.activeTab : ''}`}
+              onClick={() => setActiveTab('orders')}
+            >
+              Orders
+            </button>
+          </div>
+
+          {/* tab content */}
+          {activeTab === 'products' && <ManageProducts />}
+          {activeTab === 'orders' && <ManageOrders />}
         </div>
       </main>
 

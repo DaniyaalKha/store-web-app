@@ -18,8 +18,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pc_store_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
-      DATABASE_URL: file:./packages/database/pc-store.db
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pc_store_test
       BETTER_AUTH_SECRET: test-secret-for-testing-workflow
       BETTER_AUTH_URL: http://localhost:3000
 
@@ -47,7 +62,7 @@ jobs:
       - name: Create .env file
         run: |
           cat > .env << EOF
-          DATABASE_URL=file:./packages/database/pc-store.db
+          DATABASE_URL=postgresql://postgres:postgres@localhost:5432/pc_store_test
           BETTER_AUTH_SECRET=test-secret-for-testing-workflow
           BETTER_AUTH_URL=http://localhost:3000
           EOF

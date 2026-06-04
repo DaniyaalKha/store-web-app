@@ -2,7 +2,7 @@ import { test, expect } from './fixtures';
 import { loginAsCustomer, loginAsAdmin } from '../helpers/auth-helpers';
 import { TEST_USERS } from '../helpers/constants';
 
-test.describe('Authorization & Role-Based Access Control', () => {
+test.describe('Authorisation & Role-Based Access Control', () => {
   test('customer cannot access admin page', async ({ page }) => {
     await loginAsCustomer(page);
     

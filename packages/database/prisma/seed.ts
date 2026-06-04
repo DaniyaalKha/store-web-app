@@ -2,27 +2,25 @@ import { config as loadEnv } from "dotenv";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaClient, CategoryName, UserRole, OrderStatus, Prisma } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { hashPassword } from "../../../apps/web/lib/hashing.ts";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 const seedDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(seedDir, "..", "..", "..");
 const rootEnvPath = resolve(rootDir, ".env");
+
 loadEnv({ path: rootEnvPath });
 
-let databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) {
+if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set in the .env file at the root.");
 }
 
-// resolve relative path from root directory
-if (databaseUrl.startsWith("file:./")) {
-  const relativePath = databaseUrl.replace("file:", "");
-  const absolutePath = resolve(rootDir, relativePath);
-  databaseUrl = `file:${absolutePath}`;
-}
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-const adapter = new PrismaLibSql({ url: databaseUrl });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 // utility function to generate kebab-case slug from product name
@@ -128,7 +126,7 @@ async function main() {
       stock_quantity: 20,
       price: "649.0",
       image_url: "/products/images/AMD_Ryzen_7.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/RYZEN_5_9600X.glb",
     },
 
     {
@@ -141,7 +139,7 @@ async function main() {
       stock_quantity: 12,
       price: "1199.0",
       image_url: "/products/images/AMD_Ryzen_9.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/RYZEN_5_9600X.glb",
     },
 
     {
@@ -154,7 +152,7 @@ async function main() {
       stock_quantity: 15,
       price: "899.0",
       image_url: "/products/images/Intel_i9.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/RYZEN_5_9600X.glb",
     },
 
     // Products: GPUs
@@ -221,7 +219,7 @@ async function main() {
       stock_quantity: 25,
       price: "219.0",
       image_url: "/products/images/Corsair_Vengeance_RAM.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/DDR3.glb",
     },
   ];
 
@@ -416,4 +414,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

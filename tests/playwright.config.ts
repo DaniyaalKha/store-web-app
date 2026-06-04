@@ -4,6 +4,7 @@ import { defineConfig } from '@playwright/test'
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
+  workers: 1,
 
   use: {
     baseURL: 'http://localhost:3000',
@@ -13,7 +14,9 @@ export default defineConfig({
   webServer: {
     command: 'pnpm --filter web dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: !(typeof process !== 'undefined' && process.env && process.env.CI)
+    reuseExistingServer: !(typeof process !== 'undefined' && process.env && process.env.CI),
+    stdout: 'ignore',
+    stderr: 'ignore',
   },
 
   globalSetup: './global-setup.ts',

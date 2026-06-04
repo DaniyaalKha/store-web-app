@@ -111,10 +111,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!categoryRecord) {
-      return NextResponse.json(
-        { error: 'Category not found' },
-        { status: 400 }
-      );
+      // Create category if it doesn't exist
+      categoryRecord = await prisma.category.create({
+        data: { name: dbCategory },
+      });
     }
 
     // create slug from product name
