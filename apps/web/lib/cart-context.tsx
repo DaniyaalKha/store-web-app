@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useCallback, useEffect, useState } from 'react';
+import { useAuth } from './use-auth';
 
 export interface CartItem {
   id: string;
@@ -32,6 +33,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartCount, setCartCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const fetchCart = useCallback(async () => {
     try {
@@ -62,10 +64,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // fetch cart 
+  // fetch cart only for logged-in customer users
   useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+    if (user && user.role === 'customer') {
+      fetchCart();
+    } else {
+      // clear cart for non-logged-in users and admins
+      setCartItems([]);
+      setCartCount(0);
+      setError(null);
+    }
+  }, [user, fetchCart]);
 
   const addToCart = useCallback(
     async (productId: number) => {
