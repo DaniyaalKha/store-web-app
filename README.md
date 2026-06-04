@@ -85,6 +85,13 @@ pnpm test
 **Deployment**  
 This application is deployed on Vercel available here: https://store-web-app-umber.vercel.app/.
 
+## Future Improvements
+- Full payment system (PayPal, Stripe)
+- Additional tests
+- Rate limiting
+- File upload for admins (for product and brand images and product 3D models)
+- Removal placeholder assets from public folder
+
 ## Assignment Context
 This project was developed as part of a university assignment for COMP3036 at Western Sydney University to demonstrate:
 - full-stack web application development
