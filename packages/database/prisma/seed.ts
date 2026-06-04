@@ -2,27 +2,27 @@ import { config as loadEnv } from "dotenv";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaClient, CategoryName, UserRole, OrderStatus, Prisma } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { hashPassword } from "../../../apps/web/lib/hashing.ts";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 const seedDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(seedDir, "..", "..", "..");
 const rootEnvPath = resolve(rootDir, ".env");
+
 loadEnv({ path: rootEnvPath });
 
-let databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) {
+console.log("DATABASE_URL =", process.env.DATABASE_URL);
+
+if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set in the .env file at the root.");
 }
 
-// resolve relative path from root directory
-if (databaseUrl.startsWith("file:./")) {
-  const relativePath = databaseUrl.replace("file:", "");
-  const absolutePath = resolve(rootDir, relativePath);
-  databaseUrl = `file:${absolutePath}`;
-}
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-const adapter = new PrismaLibSql({ url: databaseUrl });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 // utility function to generate kebab-case slug from product name
@@ -416,4 +416,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });
