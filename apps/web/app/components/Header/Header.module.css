@@ -45,6 +45,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-left: auto;
 }
 
 .navButton {
@@ -60,6 +61,20 @@
 .navButton.active {
   border-bottom: 2px solid hsl(var(--foreground));
   padding-bottom: calc(0.5rem - 2px);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: hsl(var(--border));
+  margin: 0 1.5rem;
+}
+
+.dividerFirst {
+  width: 1px;
+  height: 24px;
+  background-color: hsl(var(--border));
+  margin: 0 1rem;
 }
 
 .loginButton {

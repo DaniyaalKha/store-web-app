@@ -106,6 +106,8 @@ export default function Header() {
             </>
           )}
 
+          <div className={styles.dividerFirst} />
+
           {/* Theme toggle - for all users */}
           <Button
             variant="ghost"
@@ -116,6 +118,20 @@ export default function Header() {
           >
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </Button>
+
+          {/* Cart - only for customers */}
+          {user && user.role === 'customer' && (
+            <Link href="/cart" className={styles.cartLink}>
+              <div className={styles.cartIcon}>
+                <ShoppingCart size={20} />
+                {totalQuantity > 0 && (
+                  <span className={styles.cartBadge}>{totalQuantity}</span>
+                )}
+              </div>
+            </Link>
+          )}
+
+          <div className={styles.divider} />
 
           {/* Authentication section */}
           {user ? (
@@ -138,18 +154,6 @@ export default function Header() {
                 </Button>
               </Link>
             </>
-          )}
-
-          {/* Cart - only for customers */}
-          {user && user.role === 'customer' && (
-            <Link href="/cart" className={styles.cartLink}>
-              <div className={styles.cartIcon}>
-                <ShoppingCart size={20} />
-                {totalQuantity > 0 && (
-                  <span className={styles.cartBadge}>{totalQuantity}</span>
-                )}
-              </div>
-            </Link>
           )}
         </nav>
       </div>
