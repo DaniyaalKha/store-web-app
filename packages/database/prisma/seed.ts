@@ -128,7 +128,7 @@ async function main() {
       stock_quantity: 20,
       price: "649.0",
       image_url: "/products/images/AMD_Ryzen_7.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/RYZEN_5_9600X.glb",
     },
 
     {
@@ -141,7 +141,7 @@ async function main() {
       stock_quantity: 12,
       price: "1199.0",
       image_url: "/products/images/AMD_Ryzen_9.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/RYZEN_5_9600X.glb",
     },
 
     {
@@ -154,7 +154,7 @@ async function main() {
       stock_quantity: 15,
       price: "899.0",
       image_url: "/products/images/Intel_i9.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/RYZEN_5_9600X.glb",
     },
 
     // Products: GPUs
@@ -221,7 +221,7 @@ async function main() {
       stock_quantity: 25,
       price: "219.0",
       image_url: "/products/images/Corsair_Vengeance_RAM.png",
-      model_3d_url: "/products/models/RTX_3080.glb",
+      model_3d_url: "/products/models/DDR3.glb",
     },
   ];
 
