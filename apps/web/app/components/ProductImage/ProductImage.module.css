@@ -1,13 +1,13 @@
 .container {
   width: 100%;
-  background-color: rgb(209, 213, 219);
+  background-color: hsl(var(--image-bg));
   height: 100%;
   min-height: 600px;
   position: relative;
 }
 
 .container.dark {
-  background-color: rgb(55, 65, 81);
+  background-color: hsl(var(--image-bg));
 }
 
 .imageWrapper {
@@ -19,6 +19,7 @@
 
 .image {
   object-fit: contain;
+  filter: var(--logo-filter);
 }
 
 @media (max-width: 768px) {

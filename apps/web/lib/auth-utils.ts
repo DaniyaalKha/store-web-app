@@ -8,4 +8,5 @@ export type AuthUser = {
   city?: string | null;
   state?: string | null;
   country?: string | null;
+  preferredMode?: string | null;
 };

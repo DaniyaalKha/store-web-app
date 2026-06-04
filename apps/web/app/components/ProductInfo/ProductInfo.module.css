@@ -25,6 +25,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  filter: var(--logo-filter);
 }
 
 .brandName {
@@ -37,10 +38,12 @@
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;
+  color: hsl(var(--foreground));
 }
 
 .description {
   line-height: 1.625;
+  color: hsl(var(--muted-foreground));
 }
 
 .priceInfo {

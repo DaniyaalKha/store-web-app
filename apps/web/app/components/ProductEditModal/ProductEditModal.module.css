@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgb(0 0 0 / 0.5);
+  background-color: var(--modal-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -222,6 +222,7 @@
   width: 24px;
   height: 24px;
   object-fit: contain;
+  filter: var(--logo-filter);
 }
 
 .brandName {
@@ -273,7 +274,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgb(0 0 0 / 0.5);
+  background-color: var(--modal-overlay);
   display: flex;
   align-items: center;
   justify-content: center;

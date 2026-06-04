@@ -398,7 +398,7 @@ export default function ManageProducts() {
           activeSort={sort}
         />
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p style={{ color: 'hsl(var(--destructive))' }}>{error}</p>}
         {loading && <p>Loading products...</p>}
 
         {/* products list */}

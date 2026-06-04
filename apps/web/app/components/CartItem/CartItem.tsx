@@ -83,7 +83,7 @@ export default function CartItem({
       {/* product info */}
       <div className={styles.infoWrapper}>
         <Link href={`/product/${slug}`}>
-          <h4 className={styles.productName} style={{ color: '#ffffff', cursor: 'pointer', textDecoration: 'none' }}>
+          <h4 className={styles.productName} style={{ cursor: 'pointer', textDecoration: 'none' }}>
             {productName}
           </h4>
         </Link>

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { use } from "react";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Geist } from "next/font/google";
@@ -27,8 +29,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Unwrap the Promise from cookies() using React.use()
+  const cookieStore = use(cookies());
+  const theme = cookieStore.get?.('theme-mode')?.value || 'dark';
+  const themeClass = theme === 'light' ? '' : 'dark';
+
   return (
-    <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
+    <html lang="en" className={cn(themeClass, "font-sans", geist.variable)}>
+      <head />
       <body className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground`}>
         <AuthProvider>
           <CartProvider>
