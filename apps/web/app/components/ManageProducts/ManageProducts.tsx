@@ -62,6 +62,7 @@ export default function ManageProducts() {
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [brandError, setBrandError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [brandFilter, setBrandFilter] = useState('');
@@ -301,6 +302,7 @@ export default function ManageProducts() {
       logoUrl: '',
       isNew: true,
     };
+    setBrandError(null);
     setSelectedBrand(newBrand);
     setIsBrandModalOpen(true);
   };
@@ -331,13 +333,17 @@ export default function ManageProducts() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to save brand');
+        const errorMessage = data.error || 'Failed to save brand';
+        setBrandError(errorMessage);
+        return;
       }
 
+      setBrandError(null);
       setIsBrandModalOpen(false);
       setSelectedBrand(null);
     } catch (err) {
       console.error('Error saving brand:', err);
+      setBrandError('An error occurred while saving the brand');
     }
   };
 
@@ -364,6 +370,7 @@ export default function ManageProducts() {
   const handleCloseBrandModal = () => {
     setIsBrandModalOpen(false);
     setSelectedBrand(null);
+    setBrandError(null);
   };
 
   return (
@@ -431,6 +438,7 @@ export default function ManageProducts() {
           onConfirm={handleConfirmBrand}
           onDelete={handleDeleteBrand}
           onClose={handleCloseBrandModal}
+          error={brandError}
         />
       )}
     </>

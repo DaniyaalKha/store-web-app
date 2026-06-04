@@ -18,6 +18,7 @@ interface BrandEditModalProps {
   onConfirm: (brand: BrandEditData) => void;
   onDelete: (brandId: number) => void;
   onClose: () => void;
+  error?: string | null;
 }
 
 export default function BrandEditModal({
@@ -26,6 +27,7 @@ export default function BrandEditModal({
   onConfirm,
   onDelete,
   onClose,
+  error,
 }: BrandEditModalProps) {
   const [formData, setFormData] = useState<BrandEditData>(brand);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -116,6 +118,7 @@ export default function BrandEditModal({
         </div>
 
         <div className={styles.content}>
+          {error && <p className={styles.errorMessage}>{error}</p>}
           <div className={styles.formGroup}>
             <label htmlFor="name" className={styles.label}>
               Brand Name:
