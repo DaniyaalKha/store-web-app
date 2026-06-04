@@ -29,6 +29,7 @@ Written in TypeScript.
 - NodeJS 18 or higher
 - pnpm or equivalent
 - Git
+- PostgreSQL  
 
 **Installation**
 1. Clone the repository.
@@ -46,24 +47,32 @@ cd store-web-app
 pnpm install
 ```
 
-4. Create environment variable (.env) file at the root of the project.
+4. Create environment variable (.env) file at the root of the project.  
+*(Replace "your-password" with your PostgreSQL password).*
 ```env
-DATABASE_URL="file:./packages/database/pc-store.db"
+DATABASE_URL="postgresql://postgres:your-password@localhost:5432/pc_store_db"
 BETTER_AUTH_SECRET="this-should-be-replaced-with-a-better-secret-key"
 BETTER_AUTH_URL="http://localhost:3000"
 ```
 
-5. Seed the database.
+5. Setup the database.  
+*Navigate to PSQL and create the database*
+```bash
+CREATE DATABASE pc_store_db;
+```
+
+*Generate and seed the database* 
 ```bash
 pnpm db:setup
 ```
-
-6. Run the project. (Note: this project uses Turborepo to manage multiple applications.)
+  
+6. Run the project.  
+*Note: this project uses Turborepo and runs on port 3000.*
 ```bash
 pnpm dev
 ```
 
-**Testing** 
+**Testing**  
 All accounts have the password "Testing123".
 - user accounts: john@test.com jane@test.com 
 - admin accounts: admin@test.com  
@@ -74,7 +83,7 @@ pnpm test
 ```
 
 **Deployment**  
-This application is deployed on Vercel available here: (to be added).
+This application is deployed on Vercel available here: https://store-web-app-umber.vercel.app/.
 
 ## Assignment Context
 This project was developed as part of a university assignment for COMP3036 at Western Sydney University to demonstrate:
