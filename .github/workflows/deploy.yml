@@ -31,12 +31,11 @@ jobs:
 
       - name: Create root .env
         run: |
-          run: |
-            cat > .env << EOF
-            DATABASE_URL="${{ secrets.DATABASE_URL }}"
-            BETTER_AUTH_SECRET="${{ secrets.BETTER_AUTH_SECRET }}"
-            BETTER_AUTH_URL="${{ secrets.BETTER_AUTH_URL }}"
-            EOF
+          cat > .env << EOF
+          DATABASE_URL="${{ secrets.DATABASE_URL }}"
+          BETTER_AUTH_SECRET="${{ secrets.BETTER_AUTH_SECRET }}"
+          BETTER_AUTH_URL="${{ secrets.BETTER_AUTH_URL }}"
+          EOF
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
