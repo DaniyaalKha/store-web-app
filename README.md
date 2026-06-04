@@ -21,7 +21,7 @@ Written in TypeScript.
 
 **Backend**
 - NextJS
-- Prisma
+- Prisma with PostgreSQL
 - BetterAuth (and Argon2)
 
 ## Getting Started
@@ -86,4 +86,6 @@ This project was developed as part of a university assignment for COMP3036 at We
 
 ## Attributions
 - [Luis Gonzalez / luchox23 on Unsplash for computer photo](https://unsplash.com/photos/black-and-gray-computer-keyboard-jgzdwJWCPDI)
-- [Arham Abdullah on SketchFab for RTX 3080TI graphics card model](https://sketchfab.com/3d-models/rtx-3080ti-graphics-card-3d-model-7c90da836c4a43ee99afbe0c0f39cf12)
+- [Arham Abdullah on SketchFab for RTX 3080TI graphics card model](https://sketchfab.com/3d-models/rtx-3080ti-graphics-card-3d-model-7c90da836c4a43ee99afbe0c0f39cf12)  
+- [PolyDavid on SketchFab for AMD Ryzen 5 9600x CPU model](https://sketchfab.com/3d-models/amd-9600x-cpu-low-poly-b433826fb4b1432dbc18a90b89dede71) 
+- [Spark Games on SketchFab for RAM model](https://sketchfab.com/3d-models/old-computer-ram-9d3016df1c44484096c589b75a53936e)
