@@ -13,6 +13,7 @@ interface DBProduct {
   id: number;
   name: string;
   slug: string;
+  description: string | null;
   image_url: string | null;
   model_3d_url: string | null;
   price: string | number;
@@ -162,7 +163,7 @@ export default function ManageProducts() {
       imageUrl: fullProduct.image_url || '',
       modelUrl: fullProduct.model_3d_url || '',
       price: String(fullProduct.price),
-      description: '',
+      description: fullProduct.description || '',
       stockQuantity: String(fullProduct.stock_quantity),
       isNew: false,
     };
