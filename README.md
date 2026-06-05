@@ -73,7 +73,7 @@ pnpm dev
 ```
 
 **Testing**  
-All accounts have the password "Testing123".
+All accounts have the password "Testing123!".
 - user accounts: john@test.com jane@test.com 
 - admin accounts: admin@test.com  
 

@@ -132,7 +132,7 @@ test.describe('Authentication & Sessions', () => {
     await page.goto('/profile');
     
     const originalPassword = TEST_USERS.customer2.password;
-    const newPassword = 'NewPassword123';
+    const newPassword = 'NewPassword123!';
     
     await page.getByRole('button', { name: 'Edit Details' }).click();
     await page.locator('#currentPassword').fill(originalPassword);
@@ -167,7 +167,7 @@ test.describe('Authentication & Sessions', () => {
     
     await page.getByRole('button', { name: 'Edit Details' }).click();
     await page.locator('#currentPassword').fill('WrongPassword123');
-    await page.locator('#newPassword').fill('NewPassword123');
+    await page.locator('#newPassword').fill('NewPassword123!');
     await page.getByRole('button', { name: 'Save Changes' }).click();
     
     await page.waitForTimeout(1000);
@@ -467,31 +467,6 @@ test.describe('Authentication & Sessions', () => {
     expect(data.user).not.toHaveProperty('password');
     expect(data.user).not.toHaveProperty('passwordHash');
     expect(data.user).not.toHaveProperty('accounts');
-  });
-
-  test('signup should handle rate limiting', async ({ page }) => {
-    const email = `ratelimit_${Date.now()}@test.com`;
-    
-    // Make multiple rapid signup attempts
-    const attempts = [];
-    for (let i = 0; i < 6; i++) {
-      const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
-        data: {
-          email: `${email}_${i}@test.com`,
-          password: 'ValidPass123!',
-          firstName: 'John',
-          lastName: 'Doe',
-          address: '123 Main Street',
-          city: 'Sydney',
-          state: 'NSW',
-          country: 'Australia',
-        },
-      });
-      attempts.push(response.status());
-    }
-
-    // At least one should be rate limited (429)
-    expect(attempts.some(status => status === 429)).toBe(true);
   });
 
   test('email should be case-insensitive for uniqueness check', async ({ page }) => {

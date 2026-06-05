@@ -72,7 +72,7 @@ test.describe('User Profile API', () => {
   });
 
   test('profile password change with correct current password', async ({ page }) => {
-    const newPassword = 'NewPass123';
+    const newPassword = 'NewPass123!';
     const originalPassword = TEST_USERS.customer2.password;
 
     await loginAsCustomer(page, 'customer2');
@@ -113,7 +113,7 @@ test.describe('User Profile API', () => {
       state: 'ST',
       country: 'Country',
       currentPassword: 'WrongPassword123',
-      newPassword: 'NewPass123',
+      newPassword: 'NewPass123!',
     });
     
     expect(response.status()).toBe(400);

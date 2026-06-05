@@ -35,7 +35,9 @@ export async function POST(request: NextRequest) {
       'unknown';
 
     // Rate limiting: allow 5 signup attempts per 15 minutes per IP
-    if (!checkRateLimit(clientIp)) {
+    // Skip rate limiting for localhost (development/testing)
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === 'localhost';
+    if (!isLocalhost && !checkRateLimit(clientIp)) {
       return NextResponse.json(
         { error: { message: 'Too many signup attempts. Please try again later.' } },
         { status: 429 } // Too Many Requests

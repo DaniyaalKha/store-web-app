@@ -1,21 +1,21 @@
 export const TEST_USERS = {
   admin: {
     email: 'admin@test.com',
-    password: 'Testing123',
+    password: 'Testing123!',
     firstName: 'Admin',
     lastName: 'User',
     role: 'admin',
   },
   customer1: {
     email: 'john@test.com',
-    password: 'Testing123',
+    password: 'Testing123!',
     firstName: 'John',
     lastName: 'Doe',
     role: 'customer',
   },
   customer2: {
     email: 'jane@test.com',
-    password: 'Testing123',
+    password: 'Testing123!',
     firstName: 'Jane',
     lastName: 'Smith',
     role: 'customer',

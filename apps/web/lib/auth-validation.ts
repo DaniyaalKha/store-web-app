@@ -76,7 +76,7 @@ export async function validateEmailUnique(email: string, prisma: any) {
 }
 
 // sanitise
-export function sanitiseInput(input: string): string {
+export function sanitizeInput(input: string): string {
   return input
     .trim()
     .replace(/[<>]/g, '') // Remove angle brackets
