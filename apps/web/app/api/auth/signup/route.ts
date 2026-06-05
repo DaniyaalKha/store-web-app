@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@repo/database";
 import { hashPassword } from "@/lib/hashing";
-import { validateSignupInput, sanitizeInput } from "@/lib/auth-validation";
+import { validateSignupInput, sanitizeInput, type SignupInput } from "@/lib/auth-validation";
 
 // rate limiting
 const signupAttempts = new Map<string, { count: number; resetTime: number }>();
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, firstName, lastName, address, city, state, country } = validation.data;
+    const { email, password, firstName, lastName, address, city, state, country } = validation.data as SignupInput;
 
     // Check if user already exists (case-insensitive email)
     const existingUser = await prisma.user.findUnique({

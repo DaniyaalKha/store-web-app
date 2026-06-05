@@ -25,7 +25,9 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   advanced: {
     useSecureCookies: process.env.NODE_ENV === 'production',
-    crossSubDomainCookies: false,
+    crossSubDomainCookies: {
+      enabled: false,
+    },
   },
   user: {
     additionalFields: {
