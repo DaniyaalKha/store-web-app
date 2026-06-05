@@ -1,4 +1,6 @@
-# store-web-app
+<img width="2530" height="1383" alt="image" src="https://github.com/user-attachments/assets/e2b8b1e3-8f33-41db-aefc-bbe1aec33598" />
+
+# Tech store web app
 A modern B2C e-commerce web application built for a university assignment using a monorepository architecture with NextJS and React.
 
 ## Overview
