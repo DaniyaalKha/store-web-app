@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       },
       status: order.status,
       order_time: order.order_time,
-      products: order.products.map((op) => ({
+      products: order.products.map((op: typeof order.products[number]) => ({
         product_id: op.product_id,
         product_name: op.product.name,
         quantity: op.quantity,
