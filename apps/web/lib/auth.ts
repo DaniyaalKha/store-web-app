@@ -3,6 +3,19 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@repo/database";
 import { hashPassword, verifyPassword } from "./hashing";
 
+// Validate environment variables
+if (!process.env.BETTER_AUTH_SECRET) {
+  throw new Error('BETTER_AUTH_SECRET environment variable is required');
+}
+
+if (!process.env.BETTER_AUTH_URL) {
+  throw new Error('BETTER_AUTH_URL environment variable is required');
+}
+
+if (process.env.BETTER_AUTH_SECRET.length < 32) {
+  console.warn('BETTER_AUTH_SECRET should be at least 32 characters long');
+}
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
@@ -10,6 +23,10 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   basePath: "/api/auth",
   baseURL: process.env.BETTER_AUTH_URL,
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === 'production',
+    crossSubDomainCookies: false,
+  },
   user: {
     additionalFields: {
       role: {

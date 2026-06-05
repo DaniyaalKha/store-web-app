@@ -3,6 +3,8 @@ import { loginUser, isLoggedIn, getSessionUser, logout } from '../helpers/auth-h
 import { TEST_USERS } from '../helpers/constants';
 
 test.describe('Authentication & Sessions', () => {
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
   test('user registration with valid profile data', async ({ page }) => {
     await page.goto('/register');
     
@@ -195,5 +197,337 @@ test.describe('Authentication & Sessions', () => {
     
     await page1.close();
     await page2.close();
+  });
+
+  test('signup with valid data should succeed', async ({ page }) => {
+    const newEmail = `valid_${Date.now()}@test.com`;
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: newEmail,
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(201);
+    const data = await response.json();
+    expect(data.user).toBeDefined();
+    expect(data.user.email).toBe(newEmail);
+    expect(data.user.firstName).toBe('John');
+  });
+
+  test('signup with missing email should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: '',
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error).toBeDefined();
+  });
+
+  test('signup with invalid email format should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: 'not-an-email',
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error.details?.email).toBeDefined();
+  });
+
+  test('signup with password too short should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `short_${Date.now()}@test.com`,
+        password: 'Short1!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error.details?.password).toBeDefined();
+  });
+
+  test('signup without uppercase letter in password should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `nouppercase_${Date.now()}@test.com`,
+        password: 'validpass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error.details?.password).toContain('uppercase');
+  });
+
+  test('signup without number in password should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `nonumber_${Date.now()}@test.com`,
+        password: 'ValidPass!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error.details?.password).toContain('number');
+  });
+
+  test('signup without special character in password should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `nospecial_${Date.now()}@test.com`,
+        password: 'ValidPass123',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error.details?.password).toContain('special character');
+  });
+
+  test('signup with extra fields should succeed (extra fields ignored)', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `extrafields_${Date.now()}@test.com`,
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+        extraField: 'should be ignored', // confirmPassword is validated client-side only, server ignores it
+      },
+    });
+
+    expect(response.status()).toBe(201);
+    const data = await response.json();
+    expect(data.user.email).toContain('extrafields_');
+  });
+
+  test('signup with invalid name characters should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `invalidname_${Date.now()}@test.com`,
+        password: 'ValidPass123!',
+        firstName: 'John123', // Numbers not allowed in name
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error.details?.firstName).toBeDefined();
+  });
+
+  test('signup with duplicate email should fail', async ({ page }) => {
+    const email = `duplicate_${Date.now()}@test.com`;
+    
+    // First signup
+    const firstResponse = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email,
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(firstResponse.status()).toBe(201);
+
+    // Second signup with same email
+    const secondResponse = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email,
+        password: 'ValidPass123!',
+        firstName: 'Jane',
+        lastName: 'Smith',
+        address: '456 Oak Street',
+        city: 'Melbourne',
+        state: 'VIC',
+        country: 'Australia',
+      },
+    });
+
+    expect(secondResponse.status()).toBe(409);
+    const data = await secondResponse.json();
+    expect(data.error.message).toContain('already registered');
+  });
+
+  test('signup with short address should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `shortaddr_${Date.now()}@test.com`,
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123', // Too short
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error.details?.address).toBeDefined();
+  });
+
+  test('signup with missing required fields should fail', async ({ page }) => {
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: `missing_${Date.now()}@test.com`,
+        password: 'ValidPass123!',
+        // Missing firstName, lastName, address, etc.
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const data = await response.json();
+    expect(data.error).toBeDefined();
+  });
+
+  test('signup response should not contain password hash', async ({ page }) => {
+    const newEmail = `nopass_${Date.now()}@test.com`;
+    const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: newEmail,
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(response.status()).toBe(201);
+    const data = await response.json();
+    
+    // Verify sensitive data is not in response
+    expect(data.user).not.toHaveProperty('password');
+    expect(data.user).not.toHaveProperty('passwordHash');
+    expect(data.user).not.toHaveProperty('accounts');
+  });
+
+  test('signup should handle rate limiting', async ({ page }) => {
+    const email = `ratelimit_${Date.now()}@test.com`;
+    
+    // Make multiple rapid signup attempts
+    const attempts = [];
+    for (let i = 0; i < 6; i++) {
+      const response = await page.request.post(`${baseUrl}/api/auth/signup`, {
+        data: {
+          email: `${email}_${i}@test.com`,
+          password: 'ValidPass123!',
+          firstName: 'John',
+          lastName: 'Doe',
+          address: '123 Main Street',
+          city: 'Sydney',
+          state: 'NSW',
+          country: 'Australia',
+        },
+      });
+      attempts.push(response.status());
+    }
+
+    // At least one should be rate limited (429)
+    expect(attempts.some(status => status === 429)).toBe(true);
+  });
+
+  test('email should be case-insensitive for uniqueness check', async ({ page }) => {
+    const baseEmail = `casetest_${Date.now()}@test.com`;
+    
+    // First signup
+    const firstResponse = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: baseEmail,
+        password: 'ValidPass123!',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'Sydney',
+        state: 'NSW',
+        country: 'Australia',
+      },
+    });
+
+    expect(firstResponse.status()).toBe(201);
+
+    // Try signup with uppercase version
+    const secondResponse = await page.request.post(`${baseUrl}/api/auth/signup`, {
+      data: {
+        email: baseEmail.toUpperCase(),
+        password: 'ValidPass123!',
+        firstName: 'Jane',
+        lastName: 'Smith',
+        address: '456 Oak Street',
+        city: 'Melbourne',
+        state: 'VIC',
+        country: 'Australia',
+      },
+    });
+
+    // Should be rejected as duplicate
+    expect(secondResponse.status()).toBe(409);
   });
 });

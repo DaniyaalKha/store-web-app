@@ -44,14 +44,14 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  firstName     String?  @map("first_name")
-  lastName      String?  @map("last_name")
+  firstName     String?
+  lastName      String?
   role          UserRole @default(customer)
   address       String?
   city          String?
   state         String?
   country       String?
-  preferredMode String?  @default("dark") @map("preferred_mode")
+  preferredMode String?  @default("dark")
 
   accounts      Account[]
   sessions      Session[]

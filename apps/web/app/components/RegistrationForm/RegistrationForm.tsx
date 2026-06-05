@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import FormInput from '../FormInput/FormInput';
+import { passwordSchema, nameSchema, emailSchema } from '@/lib/auth-validation';
 
 interface RegistrationFormProps {
   onSubmit?: (formData: RegistrationData) => void | Promise<void>;
@@ -34,6 +35,18 @@ interface FormErrors {
   country?: string;
 }
 
+interface PasswordStrength {
+  score: number; // 0-4
+  message: string;
+  color: string;
+  requirements: {
+    minLength: boolean;
+    uppercase: boolean;
+    number: boolean;
+    special: boolean;
+  };
+}
+
 export default function RegistrationForm({ onSubmit, error }: RegistrationFormProps) {
   const [formData, setFormData] = useState<RegistrationData>({
     email: '',
@@ -49,6 +62,7 @@ export default function RegistrationForm({ onSubmit, error }: RegistrationFormPr
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
 
   const handleInputChange = (field: keyof RegistrationData, value: string) => {
     setFormData((prev) => ({
@@ -57,58 +71,110 @@ export default function RegistrationForm({ onSubmit, error }: RegistrationFormPr
     }));
   };
 
+  // Calculate password strength
+  const passwordStrength = useMemo((): PasswordStrength => {
+    const pwd = formData.password;
+    const requirements = {
+      minLength: pwd.length >= 8,
+      uppercase: /[A-Z]/.test(pwd),
+      number: /[0-9]/.test(pwd),
+      special: /[!@#$%^&*()_+\-=\[\]{};:'",.<>?/\\|`~]/.test(pwd),
+    };
+
+    const metRequirements = Object.values(requirements).filter(Boolean).length;
+    let score = 0;
+    let message = '';
+    let color = '';
+
+    if (pwd.length === 0) {
+      score = 0;
+      message = '';
+      color = '';
+    } else if (metRequirements === 4 && pwd.length >= 12) {
+      score = 4;
+      message = 'Strong password';
+      color = 'text-green-500';
+    } else if (metRequirements >= 3 && pwd.length >= 10) {
+      score = 3;
+      message = 'Good password';
+      color = 'text-blue-500';
+    } else if (metRequirements >= 2) {
+      score = 2;
+      message = 'Fair password';
+      color = 'text-yellow-500';
+    } else {
+      score = 1;
+      message = 'Weak password';
+      color = 'text-red-500';
+    }
+
+    return { score, message, color, requirements };
+  }, [formData.password]);
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // email validation
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    // Email validation
+    try {
+      emailSchema.parse(formData.email);
+    } catch {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    // first name validation
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+    // First name validation
+    try {
+      nameSchema.parse(formData.firstName);
+    } catch {
+      newErrors.firstName = 'First name can only contain letters, spaces, hyphens, and apostrophes (1-50 characters)';
     }
 
-    // last name validation
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+    // Last name validation
+    try {
+      nameSchema.parse(formData.lastName);
+    } catch {
+      newErrors.lastName = 'Last name can only contain letters, spaces, hyphens, and apostrophes (1-50 characters)';
     }
 
-    // password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+    // Password validation
+    try {
+      passwordSchema.parse(formData.password);
+    } catch {
+      newErrors.password = 'Password must be 8+ characters with uppercase, number, and special character';
     }
 
-    // confirm password validation
+    // Confirm password validation
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    // address validation
+    // Address validation
     if (!formData.address.trim()) {
       newErrors.address = 'Address is required';
+    } else if (formData.address.length < 5) {
+      newErrors.address = 'Address must be at least 5 characters';
     }
 
-    // city validation
+    // City validation
     if (!formData.city.trim()) {
       newErrors.city = 'City is required';
+    } else if (formData.city.length < 2) {
+      newErrors.city = 'City must be at least 2 characters';
     }
 
-    // state validation
+    // State validation
     if (!formData.state.trim()) {
       newErrors.state = 'State is required';
+    } else if (formData.state.length < 2) {
+      newErrors.state = 'State must be at least 2 characters';
     }
 
-    // country validation
+    // Country validation
     if (!formData.country.trim()) {
       newErrors.country = 'Country is required';
+    } else if (formData.country.length < 2) {
+      newErrors.country = 'Country must be at least 2 characters';
     }
 
     setErrors(newErrors);
@@ -140,6 +206,7 @@ export default function RegistrationForm({ onSubmit, error }: RegistrationFormPr
         country: '',
       });
       setErrors({});
+      setShowPasswordRequirements(false);
     } catch (error) {
       console.error('Registration error:', error);
     } finally {
@@ -203,15 +270,68 @@ export default function RegistrationForm({ onSubmit, error }: RegistrationFormPr
           placeholder="Doe"
           ariaLabel="Last name"
         />
-        <FormInput
-          label="Password"
-          type="password"
-          value={formData.password}
-          onChange={(value) => handleInputChange('password', value)}
-          error={errors.password}
-          placeholder="••••••••"
-          ariaLabel="Password"
-        />
+
+        {/* Password field with strength indicator */}
+        <div>
+          <FormInput
+            label="Password"
+            type="password"
+            value={formData.password}
+            onChange={(value) => handleInputChange('password', value)}
+            error={errors.password}
+            placeholder="••••••••"
+            ariaLabel="Password"
+            onFocus={() => setShowPasswordRequirements(true)}
+            onBlur={() => setShowPasswordRequirements(false)}
+          />
+
+          {/* Password strength indicator */}
+          {formData.password && (
+            <div className="mt-2 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Password strength:</span>
+                <span className={`text-sm font-semibold ${passwordStrength.color}`}>
+                  {passwordStrength.message}
+                </span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    passwordStrength.score === 4
+                      ? 'bg-green-500 w-full'
+                      : passwordStrength.score === 3
+                      ? 'bg-blue-500 w-3/4'
+                      : passwordStrength.score === 2
+                      ? 'bg-yellow-500 w-1/2'
+                      : 'bg-red-500 w-1/4'
+                  }`}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Password requirements checklist */}
+          {(showPasswordRequirements || formData.password) && (
+            <div className="mt-3 p-3 bg-muted rounded-md text-sm space-y-1">
+              <p className="font-semibold text-foreground">Password requirements:</p>
+              <div className="space-y-1">
+                <p className={passwordStrength.requirements.minLength ? 'text-green-500' : 'text-muted-foreground'}>
+                  ✓ At least 8 characters
+                </p>
+                <p className={passwordStrength.requirements.uppercase ? 'text-green-500' : 'text-muted-foreground'}>
+                  ✓ At least one uppercase letter (A-Z)
+                </p>
+                <p className={passwordStrength.requirements.number ? 'text-green-500' : 'text-muted-foreground'}>
+                  ✓ At least one number (0-9)
+                </p>
+                <p className={passwordStrength.requirements.special ? 'text-green-500' : 'text-muted-foreground'}>
+                  ✓ At least one special character (!@#$%^&* etc.)
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
         <FormInput
           label="Confirm Password"
           type="password"
@@ -260,7 +380,7 @@ export default function RegistrationForm({ onSubmit, error }: RegistrationFormPr
           onChange={(value) => handleInputChange('state', value)}
           error={errors.state}
           placeholder="NSW"
-          ariaLabel="State"
+          ariaLabel="State or province"
         />
         <FormInput
           label="Country"
@@ -273,23 +393,10 @@ export default function RegistrationForm({ onSubmit, error }: RegistrationFormPr
         />
       </div>
 
-      {/* Sign up button */}
-      <Button
-        type="submit"
-        disabled={isLoading}
-        className="w-full bg-primary text-primary-foreground hover:bg-primary/80"
-        size="default"
-      >
-        {isLoading ? 'Creating Account...' : 'Register'}
+      {/* Submit button */}
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? 'Creating Account...' : 'Create Account'}
       </Button>
-
-      {/* login link */}
-      <div className="text-center text-sm">
-        <span className="text-muted-foreground">Already have an account? </span>
-        <Link href="/login" className="text-primary hover:underline font-medium">
-          Sign in
-        </Link>
-      </div>
     </form>
   );
 }
