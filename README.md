@@ -98,7 +98,14 @@ This application is deployed on Vercel available here: https://store-web-app-umb
 - Additional tests
 - Rate limiting
 - File upload for admins (for product and brand images and product 3D models)
-- Remove placeholder assets from public folder
+- Removal of placeholder assets from public folder
+- Wishlist system
+- Review/rating system
+- Detailed product specifications system (with specifications filtering)
+- Discount and bundle system
+- Improved analytics page for admins
+- Inventory warnings for admins
+- Email notifications
 
 ## Assignment Context
 This project was developed as part of a university assignment for COMP3036 at Western Sydney University to demonstrate:
