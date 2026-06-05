@@ -17,6 +17,20 @@ The Store Web App provides a RESTful API for managing e-commerce operations incl
 
 The API uses **Better-Auth** for authentication, implementing secure email/password-based authentication with session management. All protected endpoints require an active session.
 
+**Password Requirements:**
+- Minimum 8 characters, maximum 128 characters
+- At least one UPPERCASE letter (A-Z)
+- At least one number (0-9)
+- At least one special character (!@#$%^&*()_+-=[]{}';:",./<>?\|`~)
+
+**Security Features:**
+- Argon2id password hashing (memory-hard, GPU-resistant)
+- Rate limiting: 5 signup attempts per 15 minutes per IP address
+- Input sanitization to prevent XSS attacks
+- Generic error messages to prevent user enumeration
+- HTTPOnly, Secure, and SameSite cookie flags
+- Case-insensitive email validation and storage
+
 ### Session Cookie
 
 Upon successful authentication, a session cookie is automatically set by the server and must be included in subsequent requests. The session:
@@ -36,34 +50,41 @@ Protected endpoints require an active user session. If authentication fails:
 
 ### Authentication Endpoints
 
-These endpoints are handled by Better-Auth and are available at `/api/auth/*`
-
 #### Sign Up
 
 **Create a new user account**
 
 - **HTTP Method**: `POST`
-- **Path**: `/api/auth/sign-up`
+- **Path**: `/api/auth/signup`
 - **Authentication**: Not required
+- **Rate Limiting**: 5 attempts per 15 minutes per IP address (returns `429 Too Many Requests`)
 - **Body Parameters**:
-  - `email` (string, required): User's email address
-  - `password` (string, required): Password (minimum 8 characters)
-  - `firstName` (string, optional): User's first name
-  - `lastName` (string, optional): User's last name
+  - `email` (string, required): Valid email address (max 254 chars)
+  - `password` (string, required): Must meet password requirements (8-128 chars, uppercase, number, special char)
+  - `firstName` (string, required): 1-50 characters, letters/spaces/hyphens/apostrophes only
+  - `lastName` (string, required): 1-50 characters, letters/spaces/hyphens/apostrophes only
+  - `address` (string, required): 5-255 characters
+  - `city` (string, required): 2-50 characters
+  - `state` (string, required): 2-50 characters
+  - `country` (string, required): 2-50 characters
 
 **Example Request**:
 ```bash
-curl -X POST http://localhost:3000/api/auth/sign-up \
+curl -X POST http://localhost:3000/api/auth/signup \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
-    "password": "SecurePass123",
+    "password": "SecurePass123!",
     "firstName": "John",
-    "lastName": "Doe"
+    "lastName": "Doe",
+    "address": "123 Main Street",
+    "city": "Sydney",
+    "state": "NSW",
+    "country": "Australia"
   }'
 ```
 
-**Success Response** (200):
+**Success Response** (201 Created):
 ```json
 {
   "user": {
@@ -72,18 +93,43 @@ curl -X POST http://localhost:3000/api/auth/sign-up \
     "firstName": "John",
     "lastName": "Doe",
     "role": "customer",
-    "createdAt": "2024-01-15T10:30:00Z"
-  },
-  "session": {
-    "id": "session-456",
-    "expiresAt": "2024-01-16T10:30:00Z"
+    "address": "123 Main Street",
+    "city": "Sydney",
+    "state": "NSW",
+    "country": "Australia",
+    "preferredMode": null
   }
 }
 ```
 
 **Error Responses**:
-- `400 Bad Request` - Invalid input or password too short
-- `409 Conflict` - Email already exists
+- `400 Bad Request` - Validation failed
+  ```json
+  {
+    "error": {
+      "message": "Validation failed",
+      "details": {
+        "password": "Password must contain at least one special character"
+      }
+    }
+  }
+  ```
+- `409 Conflict` - Email already registered
+  ```json
+  {
+    "error": {
+      "message": "This email is already registered. Please log in or use a different email."
+    }
+  }
+  ```
+- `429 Too Many Requests` - Rate limit exceeded
+  ```json
+  {
+    "error": {
+      "message": "Too many signup attempts. Please try again later."
+    }
+  }
+  ```
 
 ---
 
@@ -192,15 +238,15 @@ curl -X POST http://localhost:3000/api/auth/sign-out
 - **Authentication**: Required (session cookie)
 - **Body Parameters**:
   - `currentPassword` (string, required): Current password
-  - `newPassword` (string, required): New password (minimum 8 characters)
+  - `newPassword` (string, required): New password (must meet password requirements: 8-128 chars, uppercase, number, special char)
 
 **Example Request**:
 ```bash
 curl -X POST http://localhost:3000/api/auth/change-password \
   -H "Content-Type: application/json" \
   -d '{
-    "currentPassword": "OldPass123",
-    "newPassword": "NewPass456"
+    "currentPassword": "OldPass123!",
+    "newPassword": "NewPass456!"
   }'
 ```
 
@@ -211,7 +257,17 @@ curl -X POST http://localhost:3000/api/auth/change-password \
 
 **Error Responses**:
 - `401 Unauthorized` - Invalid current password
-- `400 Bad Request` - Missing fields or password too short
+- `400 Bad Request` - Missing fields or password doesn't meet requirements
+  ```json
+  {
+    "error": {
+      "message": "Validation failed",
+      "details": {
+        "newPassword": "Password must contain at least one special character"
+      }
+    }
+  }
+  ```
 
 ---
 
@@ -1063,7 +1119,7 @@ curl -X GET http://localhost:3000/api/orders
 
 ## Changelog
 
-### Version 1.0.0
+### Version 1.1.0
 
 - Initial API release
 - Authentication (sign up, sign in, sign out)
