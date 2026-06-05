@@ -11,18 +11,24 @@ Additionally, admins can:
 - add, edit, and remove products
 - view purchase records.
 
+**API**  
+API information is available in API.md  
+  
+**Structure**  
+File structure information is available in STRUCTURE.md  
+  
 ## Tech Stack
 Written in TypeScript.
 
-**Frontend**
-- React
-- Tailwind CSS
-- ThreeJS
-
-**Backend**
-- NextJS
-- Prisma with PostgreSQL
-- BetterAuth (and Argon2)
+| Layer | Technologies |
+|-------|--------------|
+| **Frontend** | Next.JS, React, Tailwind CSS, Three.JS |
+| **Backend** | Next.JS API Routes, Better-Auth |
+| **Database** | PostgreSQL, Prisma ORM |
+| **Auth** | Better-Auth with Argon2 hashing |
+| **Validation** | Zod |
+| **Testing** | Playwright E2E tests |
+| **Build** | Turborepo, pnpm workspaces |
 
 ## Getting Started
 **Prerequisites**
