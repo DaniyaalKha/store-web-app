@@ -60,8 +60,9 @@ jobs:
       - name: Pull Vercel Project Settings
         run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Build Project Artifacts
-        run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
       - name: Deploy Project Artifacts
-        run: npx vercel deploy --prod --token=$VERCEL_TOKEN
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+        run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
