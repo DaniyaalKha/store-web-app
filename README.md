@@ -1,4 +1,6 @@
-# store-web-app
+<img width="2530" height="1383" alt="image" src="https://github.com/user-attachments/assets/e2b8b1e3-8f33-41db-aefc-bbe1aec33598" />
+
+# Tech store web app
 A modern B2C e-commerce web application built for a university assignment using a monorepository architecture with NextJS and React.
 
 ## Overview
@@ -11,18 +13,24 @@ Additionally, admins can:
 - add, edit, and remove products
 - view purchase records.
 
+**API**  
+API information is available in API.md  
+  
+**Structure**  
+File structure information is available in STRUCTURE.md  
+  
 ## Tech Stack
 Written in TypeScript.
 
-**Frontend**
-- React
-- Tailwind CSS
-- ThreeJS
-
-**Backend**
-- NextJS
-- Prisma with PostgreSQL
-- BetterAuth (and Argon2)
+| Layer | Technologies |
+|-------|--------------|
+| **Frontend** | Next.JS, React, Tailwind CSS, Three.JS |
+| **Backend** | Next.JS API Routes, Better-Auth |
+| **Database** | PostgreSQL, Prisma ORM |
+| **Auth** | Better-Auth with Argon2 hashing |
+| **Validation** | Zod |
+| **Testing** | Playwright E2E tests |
+| **Build** | Turborepo, pnpm workspaces |
 
 ## Getting Started
 **Prerequisites**
@@ -73,7 +81,7 @@ pnpm dev
 ```
 
 **Testing**  
-All accounts have the password "Testing123".
+All accounts have the password "Testing123!".
 - user accounts: john@test.com jane@test.com 
 - admin accounts: admin@test.com  
 
@@ -84,6 +92,13 @@ pnpm test
 
 **Deployment**  
 This application is deployed on Vercel available here: https://store-web-app-umber.vercel.app/.
+
+## Future Improvements
+- Full payment system (PayPal, Stripe)
+- Additional tests
+- Rate limiting
+- File upload for admins (for product and brand images and product 3D models)
+- Remove placeholder assets from public folder
 
 ## Assignment Context
 This project was developed as part of a university assignment for COMP3036 at Western Sydney University to demonstrate:
@@ -98,3 +113,4 @@ This project was developed as part of a university assignment for COMP3036 at We
 - [Arham Abdullah on SketchFab for RTX 3080TI graphics card model](https://sketchfab.com/3d-models/rtx-3080ti-graphics-card-3d-model-7c90da836c4a43ee99afbe0c0f39cf12)  
 - [PolyDavid on SketchFab for AMD Ryzen 5 9600x CPU model](https://sketchfab.com/3d-models/amd-9600x-cpu-low-poly-b433826fb4b1432dbc18a90b89dede71) 
 - [Spark Games on SketchFab for RAM model](https://sketchfab.com/3d-models/old-computer-ram-9d3016df1c44484096c589b75a53936e)
+- Product images from relevant brands and retailers.

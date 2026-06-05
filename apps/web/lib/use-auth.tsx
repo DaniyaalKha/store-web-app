@@ -119,51 +119,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signup(formData: SignupData) {
     try {
-      const response = await fetch('/api/auth/sign-up', {
+      const signupPayload = {
+        email: formData.email,
+        password: formData.password,
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        country: formData.country,
+      };
+      
+      console.log('Starting signup with email:', formData.email);
+
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          name: `${formData.firstName} ${formData.lastName}`.trim(),
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          country: formData.country,
-        }),
+        body: JSON.stringify(signupPayload),
       });
+
+      console.log('Signup response status:', response.status);
 
       if (!response.ok) {
         const responseText = await response.text();
         console.error('Signup error response:', responseText);
-        let errorMessage = 'Signup failed';
+        
+        let errorMessage = `Signup failed with status ${response.status}`;
+        
         try {
           const data = JSON.parse(responseText);
-          errorMessage = data.error?.message || data.error || 'Signup failed';
+          errorMessage = data.error?.message || data.error || errorMessage;
         } catch (e) {
-          // Response wasn't JSON
+          if (responseText) {
+            errorMessage = responseText;
+          }
         }
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      const baUser = data.user;
+      console.log('Signup response received');
+      
+      const userData = data.user;
+      if (!userData) {
+        throw new Error('No user data in signup response');
+      }
+
+      // Set user directly from signup response
       const appUser: AuthUser = {
-        id: baUser.id,
-        email: baUser.email,
-        firstName: baUser.firstName || '',
-        lastName: baUser.lastName || '',
-        role: (baUser.role || 'customer') as 'customer' | 'admin',
-        address: baUser.address,
-        city: baUser.city,
-        state: baUser.state,
-        country: baUser.country,
-        preferredMode: baUser.preferredMode || 'dark',
+        id: userData.id,
+        email: userData.email,
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || '',
+        role: (userData.role || 'customer') as 'customer' | 'admin',
+        address: userData.address || '',
+        city: userData.city || '',
+        state: userData.state || '',
+        country: userData.country || '',
+        preferredMode: userData.preferredMode || 'dark',
       };
+
       setUser(appUser);
+      console.log('Signup successful for user:', appUser.email);
       return appUser;
     } catch (error) {
       console.error('Signup error:', error);

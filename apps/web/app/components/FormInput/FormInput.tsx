@@ -11,6 +11,8 @@ interface FormInputProps {
   error?: string;
   placeholder?: string;
   ariaLabel?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export default function FormInput({
@@ -21,6 +23,8 @@ export default function FormInput({
   error,
   placeholder,
   ariaLabel,
+  onFocus,
+  onBlur,
 }: FormInputProps) {
   return (
     <div className="w-full">
@@ -30,8 +34,8 @@ export default function FormInput({
       <Input
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}        onFocus={onFocus}
+        onBlur={onBlur}        placeholder={placeholder}
         aria-label={ariaLabel || label}
         aria-invalid={!!error}
         className={error ? 'aria-invalid' : ''}

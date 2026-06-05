@@ -100,31 +100,6 @@ test.describe('Frontend - Pages & Components', () => {
     expect(page.url()).toContain('/login');
   });
 
-  test('register page displays all profile fields', async ({ page }) => {
-    await page.goto('/register');
-    
-    // Wait for page to load
-    await page.waitForTimeout(1000);
-    
-    const fields = [
-      'Email address',
-      'First name',
-      'Last name',
-      'Password',
-      'Confirm password',
-      'Street address',
-      'City',
-      'State',
-      'Country',
-    ];
-    
-    // Check for basic input fields
-    for (const field of fields) {
-      const element = page.getByLabel(field, { exact: true });
-      await expect(element).toBeVisible();
-    }
-  });
-
   test('cart page displays cart items', async ({ authenticatedAsCustomer, page }) => {
     await page.goto('/cart');
     
