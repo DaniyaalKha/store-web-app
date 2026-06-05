@@ -17,8 +17,8 @@ export default function ProductImage({
   productName = 'Product',
   brandLogo,
 }: ProductImageProps) {
-  // Use brand logo as primary image, fallback to product image, then fallback to placeholder
-  const displayImage = brandLogo || imageUrl || '/vercel.svg';
+  // Use product image as primary image, fallback to brand logo, then fallback to placeholder
+  const displayImage = imageUrl || brandLogo || '/vercel.svg';
   const showModel = !!model3dUrl;
 
   return (
